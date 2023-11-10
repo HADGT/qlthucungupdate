@@ -6,42 +6,73 @@
 }
 
 <div asp-validation-summary="All" class="text-danger"></div>
+<link href="~/Content/cssSecurity/style.css" rel="stylesheet" />
+<link href="~/Content/cssSecurity/style1.css" rel="stylesheet" />
+<style>
+    .header, footer, .go-to-top {
+        display: none;
+    }
+</style>
+<div class="container m-auto justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="login-wrap py-3">
+                    <form asp-controller="Security" asp-action="SignIn" method="post" class="form" id="form-2">
 
-<div class="login-form">
-    <div class="height360">
-        <div class="main">
-            <form asp-controller="Security" asp-action="SignIn" method="post" class="form" id="form-2">
+                        @if (@TempData["LoginErr"] != null)
+                        {
+                            <div class="alert alert-danger">@TempData["LoginErr"]</div>
+                        }
 
-                @if (@TempData["LoginErr"] != null)
-                {
-                    <div class="alert alert-danger">@TempData["LoginErr"]</div>
-                }
+                        <h3 class="heading">Đăng nhập</h3>
+                        <div class="col-md-12 col-lg-12 col-sm-12 d-flex pt-2" style="position: relative;">
+                            <div class="m-auto text-center div-light align-items-center">
+                                <span class="justify-content-between">Đăng nhập tài khoản</span>
+                            </div>
+                        </div>
 
-                <h3 class="heading">Đăng nhập</h3>
+                        @*<h4 class="text-danger">@ViewBag.msg</h4>
+                        <h4 class="text-danger"> @ViewData["blockAccount"]</h4>*@
 
-                @*<h4 class="text-danger">@ViewBag.msg</h4>
-        <h4 class="text-danger"> @ViewData["blockAccount"]</h4>*@
+                        <div class="form-group pt-5">
+                            <div class="css-vivg1i e1xsindi4">
+                                <label for="Fullname" class="form-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Tên tài khoản</span>
+                                </label>
+                                <input type="text" asp-for="UserName" class="form-control" />
+                            </div>
+                            <span class="form-message"></span>
+                        </div>
 
-                <div class="form-group">
-                    <label for="Fullname" class="form-label">Tên tài khoản</label>
-                    <input type="text" asp-for="UserName" class="form-control" />
-                    <span class="form-message"></span>
+                        <div class="form-group">
+                            <div class="css-vivg1i e1xsindi4">
+                                <label for="password" class="form-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Mật khẩu</span>
+                                </label>
+                                <input type="password" asp-for="Password" class="form-control" />
+                            </div>
+                            <span class="form-message"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="RememberMe" for="checkbox1" class="remember pt-2 text-dark text-center">
+                                <input type="checkbox" asp-for="RememberMe" id="checkbox1" class="checkbox1">
+                                Ghi nhớ mật khẩu
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit" value="Login" name="login_submit">Đăng nhập</button>
+                        </div>
+
+                        <div class="form-group dont-have-account">
+                            <span>Bạn chưa có tài khoản?</span>
+                            <a class="account-register" asp-controller="Security" asp-action="Register">Đăng ký ngay</a>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" asp-for="Password" class="form-control" />
-                    <span class="form-message"></span>
-                </div>
-
-                <label asp-for="RememberMe" for="checkbox1" class="remember"><input type="checkbox" asp-for="RememberMe" id="checkbox1" class="checkbox1"> Ghi nhớ mật khẩu</label>
-
-                <button type="submit" class="form-submit" value="Login" name="login_submit">Đăng nhập</button>
-
-                <div class="dont-have-account">
-                    Bạn chưa có tài khoản? <a class="account-register" asp-controller="Security" asp-action="Register">Đăng ký ngay</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
