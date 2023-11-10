@@ -312,10 +312,11 @@ p {
 }
 
 .post2 {
-    width: 300px;
+    width: 21%;
     position: relative;
     display: inline-block;
     user-select: none !important;
+    padding-block: 20px;
 }
 
     .post2 > a:hover::before {

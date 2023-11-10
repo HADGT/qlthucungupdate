@@ -5,7 +5,8 @@
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="~/Content/scripts/zoomsl.min.js"></script>
-
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/Content/css/style.min.css" />
 <script>
 
     //Zoom image Details product
@@ -60,47 +61,12 @@
 
         <div class="product__details-info col-lg-8 col-md-8">
             <h3 style="margin-top: unset; line-height: unset;">@Html.DisplayFor(model => model.Tensp)</h3>
+            <hr />
             <div class="short-des">
-                Mo ta ngắn
-
-            </div><hr />
-
-            <div class="product__pride">
-                @if (Model.Giamgia == 0 || Model.Giamgia == null)
-                {
-                    <div class="product__pride-newPride" style="font-size: 40px; text-align: start;">
-                        <span class="Price">
-                            <bdi>
-                                @string.Format("{0:N0}", Model.Giakhuyenmai)
-                                <span class="currencySymbol">₫</span>
-                            </bdi>
-                        </span>
-                    </div>
-                }
-                else
-                {
-                    <div class="product__pride-oldPride" style="font-size: 20px; text-align: start;">
-                        <span class="Price">
-                            <bdi>
-                                @string.Format("{0:N0}", Model.Giaban)
-                                <span class="currencySymbol">₫</span>
-                            </bdi>
-                        </span>
-                    </div>
-                    <div class="product__pride-newPride" style="font-size: 40px; text-align: start;">
-                        <span class="Price">
-                            <bdi>
-                                @string.Format("{0:N0}", Model.Giakhuyenmai)
-                                <span class="currencySymbol">₫</span>
-                            </bdi>
-                        </span>
-                    </div>
-                }
-
+                Mô tả ngắn
             </div>
-
-            <form action="" method="POST">
-
+            <hr />
+            <form class="row d-flex" action="" method="POST" style="flex-wrap: nowrap; justify-content: flex-start; align-items: center; width: 75%; text-align: center; margin: inherit;">
                 <div class="number">
                     <span>
                         Số lượng tồn
@@ -108,10 +74,7 @@
                             @Html.DisplayFor(model => model.Soluongton)
                         </span>
                     </span>
-
                 </div>
-
-
                 @if (Model.Soluongton == 0)
                 {
                     <div class="product__cart">
@@ -121,47 +84,73 @@
                 else
                 {
                     @*<div class="product__cart">
-                            <a asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp" class="product__cart-add" name="add-to-cart" onclick="alert('Thêm vào giỏ hàng thành công!')">
-                                Thêm vào giỏ hàng
-                            </a>
-                            <a asp-controller="cart" asp-action="buy" asp-route-id="@Model.Masp" class="product__cart-buy" name="buy-now">Mua ngay</a>
-                        </div>*@
+                <a asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp" class="product__cart-add" name="add-to-cart" onclick="alert('Thêm vào giỏ hàng thành công!')">
+                Thêm vào giỏ hàng
+                </a>
+                <a asp-controller="cart" asp-action="buy" asp-route-id="@Model.Masp" class="product__cart-buy" name="buy-now">Mua ngay</a>
+                </div>*@
 
-                    <div class="number">
-                        <span>Số lượng</span>
-                        <div class="number__count">
-                            <input type="number" value="1" name="soluong">
+                    <div class="number d-flex">
+                        <div>Số lượng: </div>
+                        <div class="number__count pl-2">
+                            <input type="number" value="1" name="soluong" class="list-group m-0 p-0 text-center w-25">
                         </div>
                     </div>
-
-                    <div class="product__cart">
-                        <button type="submit" class="product__cart-add" asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp">Thêm vào giỏ hàng</button>
-                    </div>
                 }
-
             </form>
+            <div class="row d-flex" style="flex-wrap: nowrap; justify-content: flex-start; align-items: center; width: 65%; text-align: center; margin: inherit; padding-inline: 15px; padding-block: 20px;">
+                <div class="product__pride">
+                    @if (Model.Giamgia == 0 || Model.Giamgia == null)
+                    {
+                        <div class="product__pride-newPride" style="font-size: 40px; text-align: start;">
+                            <span class="Price">
+                                <bdi>
+                                    @string.Format("{0:N0}", Model.Giakhuyenmai)
+                                    <span class="currencySymbol">₫</span>
+                                </bdi>
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="product__pride-oldPride" style="font-size: 20px; text-align: start;">
+                            <span class="Price">
+                                <bdi>
+                                    @string.Format("{0:N0}", Model.Giaban)
+                                    <span class="currencySymbol">₫</span>
+                                </bdi>
+                            </span>
+                        </div>
+                        <div class="product__pride-newPride" style="font-size: 30px; text-align: start;">
+                            <span class="Price">
+                                <bdi>
+                                    @string.Format("{0:N0}", Model.Giakhuyenmai)
+                                    <span class="currencySymbol">₫</span>
+                                </bdi>
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="product__cart">
+                    <button type="submit" class="product__cart-add" style="text-align: end;" asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp">Thêm vào giỏ hàng</button>
+                </div>
+            </div>
         </div>
     </div>
 
-
-
-
     <!--Mô tả sản phẩm-->
-
-    <div class="body__mainTitle d-flex justify-content-between">
+    <div class="d-flex justify-content-between" style="color: coral; padding: 0; margin: 0;">
         <h2>MÔ TẢ SẢN PHẨM </h2>
-
     </div>
-    <article>
+    <article style="text-align: center; font-style: italic; text-transform: capitalize; padding: 0;">
         @Html.DisplayFor(model => model.Mota)
     </article>
-
     <hr />
-
     <!-- Sản phẩm ngẫu nhiên -->
     <div class="body__mainTitle">
-        <h2>SẢN PHẨM NGẪU NHIÊN</h2>
+        <h2 class="mb-1 mt-1 no-border">SẢN PHẨM NGẪU NHIÊN</h2>
     </div>
+    <hr />
     <div class="row">
         @foreach (var item in ViewBag.getSPRanDom)
         {
@@ -173,10 +162,6 @@
                         </div>
                         @if (item.Giamgia == 0 || item.Giamgia == null)
                         {
-                            <div class="product__sale">
-                                <h4>Mới</h4>
-                            </div>
-
                         }
                         else
                         {
@@ -188,7 +173,6 @@
                             <div class="product__title">
                                 @item.Tensp
                             </div>
-
                             @if (!(item.Giamgia == 0 || item.Giamgia == null))
                             {
                                 <div class="product__pride-oldPride">
@@ -200,10 +184,8 @@
                                     </span>
                                 </div>
                             }
-
                         </div>
                     </div>
-
                     <div>
                         <div class="product__pride-newPride">
                             <span class="Price">

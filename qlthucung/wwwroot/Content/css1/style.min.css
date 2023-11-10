@@ -539,7 +539,6 @@ i.fa.fa-chevron-right.next.slick-arrow2 {
 
     .body__mainTitle > h2 {
         color: var(--mainColor);
-        padding-bottom: 10px;
     }
 
     .body__mainTitle ~ p {
@@ -1227,6 +1226,7 @@ footer {
 
     .banner-top-2-child > div {
         font-size: 20px;
+        padding: 3px;
     }
 
 .maincolor {
