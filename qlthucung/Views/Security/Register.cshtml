@@ -19,7 +19,7 @@
             <div class="col-md-4">
                 <div class="login-wrap py-3">
                     <form asp-controller="Security" asp-action="Register" method="post" class="form" id="form-1">
-                        <h3 class="heading">
+                        <h3 class="heading text-center">
                             <span class="justify-content-between">Đăng ký</span>
                         </h3>
                         <div class="col-md-12 col-lg-12 col-sm-12 d-flex pt-2" style="position: relative;">
@@ -27,7 +27,6 @@
                                 <span class="justify-content-between">Đăng ký tài khoản</span>
                             </div>
                         </div>
-                        <div class="spacer"><div asp-validation-summary="All" class="text-danger"></div></div>
 
                         <div class="form-group pt-5">
                             <div class="css-vivg1i e1xsindi4">
@@ -36,49 +35,79 @@
                                 </label>
                                 <input type="text" asp-for="FullName" class="form-control" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label text-left">Tên đăng nhập</label>
-                            <div>
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Tên đăng nhập</span>
+                                </label>
                                 <input type="text" asp-for="UserName" class="form-control" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label text-left">Mật khẩu</label>
-                            <div>
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Mật khẩu</span>
+                                </label>
                                 <input type="password" asp-for="Password" class="form-control" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label text-left" for="MatKhauXacNhan">
-                                Mật khẩu xác nhận:
-                            </label>
-                            <div>
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark" for="MatKhauXacNhan">
+                                    <span class="pl-3">Mật khẩu xác nhận:</span>
+                                </label>
                                 <input type="password" asp-for="ConfirmPassword" class="form-control" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label text-left">Email</label>
-                            <div>
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Email</span>
+                                </label>
                                 <input type="email" asp-for="Email" class="form-control" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label text-left">Ngày sinh</label>
-                            <div>
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Ngày sinh</span>
+                                </label>
                                 <input type="date" class="form-control" asp-for="BirthDate" />
                             </div>
+                            <span class="form-message">
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                            </span>
                         </div>
 
-                        <button type="submit" value="Create" class="form-submit" name="register_submit">Đăng ký</button>
-                        <div class="dont-have-account">
-                            Bạn đã có tài khoản? <a class="account-register" asp-controller="Security" asp-action="SignIn">Đăng nhập</a>
+                        <button type="submit" value="Create" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" name="register_submit">Đăng ký</button>
+                        <div class="dont-have-account text-center pt-2">
+                            <span style="color: coral">Bạn đã có tài khoản?</span>
+                            <a class="account-register" asp-controller="Security" asp-action="SignIn">
+                                <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" value="Login" name="login_submit">Đăng nhập</button>
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
+        </div>
