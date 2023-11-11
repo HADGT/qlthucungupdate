@@ -40,6 +40,9 @@
 *::after {
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+	box-sizing: border-box;
+	list-style: none;
+	text-align: justify;
 }
 
 html {
@@ -11234,7 +11237,8 @@ a.text-warning:hover, a.text-warning:focus {
 }
 
 .text-danger {
-	color: #dc3545 !important;
+	color: #F44336 !important;
+	padding-inline: 20px;
 }
 
 a.text-danger:hover, a.text-danger:focus {
@@ -11251,6 +11255,7 @@ a.text-light:hover, a.text-light:focus {
 
 .text-dark {
 	color: #343a40 !important;
+	padding-inline: 5px;
 }
 
 a.text-dark:hover, a.text-dark:focus {

@@ -5,65 +5,80 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div asp-validation-summary="All" class="text-danger"></div>
 
+<link href="~/Content/cssSecurity/style.css" rel="stylesheet" />
+<link href="~/Content/cssSecurity/style1.css" rel="stylesheet" />
+<style>
+    .header, footer, .go-to-top {
+        display: none;
+    }
+</style>
+<div class="container m-auto justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="login-wrap py-3">
+                    <form asp-controller="Security" asp-action="Register" method="post" class="form" id="form-1">
+                        <h3 class="heading">
+                            <span class="justify-content-between">Đăng ký</span>
+                        </h3>
+                        <div class="col-md-12 col-lg-12 col-sm-12 d-flex pt-2" style="position: relative;">
+                            <div class="m-auto text-center div-light align-items-center">
+                                <span class="justify-content-between">Đăng ký tài khoản</span>
+                            </div>
+                        </div>
+                        <div class="spacer"><div asp-validation-summary="All" class="text-danger"></div></div>
 
-<div class="login-form" style="height: unset !important; margin-top: -105px!important;">
-    <div class="main" style="padding-top: 100px; padding-bottom: 15px; margin-bottom: 0;">
-        <form asp-controller="Security" asp-action="Register" method="post" class="form" id="form-1">
-            <h3 class="heading">Đăng ký tài khoản</h3>
-            <div class="dont-have-account">
-                Bạn đã có tài khoản? <a class="account-register" asp-controller="Security" asp-action="SignIn">Đăng nhập</a>
-            </div>
+                        <div class="form-group pt-5">
+                            <div class="css-vivg1i e1xsindi4">
+                                <label class="control-label col-form-label d-flex text-dark">
+                                    <span class="pl-3">Họ và tên</span>
+                                </label>
+                                <input type="text" asp-for="FullName" class="form-control" />
+                            </div>
+                        </div>
 
-            <div class="spacer"></div>
+                        <div class="form-group">
+                            <label class="control-label text-left">Tên đăng nhập</label>
+                            <div>
+                                <input type="text" asp-for="UserName" class="form-control" />
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label class="control-label text-left">Họ và tên</label>
-                <div>
-                    <input type="text" asp-for="FullName" class="form-control" />
+                        <div class="form-group">
+                            <label class="control-label text-left">Mật khẩu</label>
+                            <div>
+                                <input type="password" asp-for="Password" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label text-left" for="MatKhauXacNhan">
+                                Mật khẩu xác nhận:
+                            </label>
+                            <div>
+                                <input type="password" asp-for="ConfirmPassword" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label text-left">Email</label>
+                            <div>
+                                <input type="email" asp-for="Email" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label text-left">Ngày sinh</label>
+                            <div>
+                                <input type="date" class="form-control" asp-for="BirthDate" />
+                            </div>
+                        </div>
+
+                        <button type="submit" value="Create" class="form-submit" name="register_submit">Đăng ký</button>
+                        <div class="dont-have-account">
+                            Bạn đã có tài khoản? <a class="account-register" asp-controller="Security" asp-action="SignIn">Đăng nhập</a>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label class="control-label text-left">Tên đăng nhập</label>
-                <div>
-                    <input type="text" asp-for="UserName" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label text-left">Mật khẩu</label>
-                <div>
-                    <input type="password" asp-for="Password" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label text-left" for="MatKhauXacNhan">
-                    Mật khẩu xác nhận:
-                </label>
-                <div>
-                    <input type="password" asp-for="ConfirmPassword" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label text-left">Email</label>
-                <div>
-                    <input type="email" asp-for="Email" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label text-left">Ngày sinh</label>
-                <div>
-                    <input type="date" class="form-control" asp-for="BirthDate" />
-                </div>
-            </div>
-
-            <button type="submit" value="Create" class="form-submit" name="register_submit">Đăng ký</button>
-
-        </form>
-    </div>
-</div>

@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div asp-validation-summary="All" class="text-danger"></div>
 <link href="~/Content/cssSecurity/style.css" rel="stylesheet" />
 <link href="~/Content/cssSecurity/style1.css" rel="stylesheet" />
 <style>
@@ -19,21 +18,20 @@
             <div class="col-md-4">
                 <div class="login-wrap py-3">
                     <form asp-controller="Security" asp-action="SignIn" method="post" class="form" id="form-2">
-
                         @if (@TempData["LoginErr"] != null)
                         {
                             <div class="alert alert-danger">@TempData["LoginErr"]</div>
                         }
 
-                        <h3 class="heading">Đăng nhập</h3>
+                        <h3 class="heading text-center">Đăng nhập</h3>
                         <div class="col-md-12 col-lg-12 col-sm-12 d-flex pt-2" style="position: relative;">
                             <div class="m-auto text-center div-light align-items-center">
                                 <span class="justify-content-between">Đăng nhập tài khoản</span>
                             </div>
                         </div>
 
-                        @*<h4 class="text-danger">@ViewBag.msg</h4>
-                        <h4 class="text-danger"> @ViewData["blockAccount"]</h4>*@
+                        @* <h4 class="text-danger">@ViewBag.msg</h4>
+                        <h4 class="text-danger"> @ViewData["blockAccount"]</h4> *@
 
                         <div class="form-group pt-5">
                             <div class="css-vivg1i e1xsindi4">
@@ -42,7 +40,9 @@
                                 </label>
                                 <input type="text" asp-for="UserName" class="form-control" />
                             </div>
-                            <span class="form-message"></span>
+                            <span class="form-message">
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
@@ -52,10 +52,12 @@
                                 </label>
                                 <input type="password" asp-for="Password" class="form-control" />
                             </div>
-                            <span class="form-message"></span>
+                            <span class="form-message">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </span>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-center">
                             <label asp-for="RememberMe" for="checkbox1" class="remember pt-2 text-dark text-center">
                                 <input type="checkbox" asp-for="RememberMe" id="checkbox1" class="checkbox1">
                                 Ghi nhớ mật khẩu
@@ -63,10 +65,10 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit" value="Login" name="login_submit">Đăng nhập</button>
+                            <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" value="Login" name="login_submit">Đăng nhập</button>
                         </div>
 
-                        <div class="form-group dont-have-account">
+                        <div class="form-group dont-have-account text-center">
                             <span>Bạn chưa có tài khoản?</span>
                             <a class="account-register" asp-controller="Security" asp-action="Register">Đăng ký ngay</a>
                         </div>
