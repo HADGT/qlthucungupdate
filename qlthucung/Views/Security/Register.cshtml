@@ -103,9 +103,11 @@
                         <button type="submit" value="Create" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" name="register_submit">Đăng ký</button>
                         <div class="dont-have-account text-center pt-2">
                             <span style="color: coral">Bạn đã có tài khoản?</span>
-                            <a class="account-register" asp-controller="Security" asp-action="SignIn">
-                                <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" value="Login" name="login_submit">Đăng nhập</button>
-                            </a>
+                            <button type="submit" class="btn form-control rounded submit px-3 btn_login form-submit pt-1 pb-1" value="Login" name="login_submit">
+                                <a class="account-register" asp-controller="Security" asp-action="SignIn">
+                                    Đăng nhập
+                                </a>
+                            </button>
                         </div>
                     </form>
                 </div>

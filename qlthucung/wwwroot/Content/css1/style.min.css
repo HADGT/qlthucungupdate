@@ -16,7 +16,6 @@
 a:hover {
     text-decoration: none !important;
     color: unset;
-    opacity: .7;
 }
 
 .navbar::before {
@@ -123,7 +122,7 @@ a:hover {
 
 .login_list {
     position: absolute;
-    top: 35px;
+    top: 55px;
     left: -90px;
     display: none;
     justify-content: left;
@@ -133,7 +132,7 @@ a:hover {
     list-style: none;
     line-height: 40px;
     text-align: left;
-    background: #fff;
+    background: #000;
     border: 1px solid #3333331a;
 }
 
@@ -148,7 +147,7 @@ a:hover {
         }
 
         .login_list > li > a {
-            color: black;
+            color: white;
         }
 
     .login_list active {
@@ -1143,7 +1142,7 @@ footer {
 }
 
     .emptyCart > img {
-        width: 200px;
+        width: 100% !important;
     }
 
 .cod {

@@ -464,3 +464,8 @@ i.fa.fa-chevron-right.next.slick-arrow2 {
 .elementor-element.elementor-element-afdce65 .elementor-icon-box-wrapper {
     text-align: left;
 }
+
+footer #contact p {
+    text-align: left;
+    padding-inline: inherit;
+}

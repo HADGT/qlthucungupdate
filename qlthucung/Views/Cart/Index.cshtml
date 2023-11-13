@@ -4,9 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/Content/css/style.min.css" />
 
-
-@*<div class="body fix-width scroll-inner" style="margin-top: 50px;">
+<div class="body fix-width scroll-inner pt-5" style="margin-top: 50px;">
     <table class="table table-striped">
 
         @if (ViewBag.cart == null)
@@ -18,11 +19,11 @@
             <tr>
                 <th>Id</th>
                 <th>Tên sp</th>
-                <th>Hình</th>
-                <th>Giá khuyến mại</th>
+                <th>Hình</th>                                                                                        
+                <th>Đơn giá</th>
                 <th>Số lượng</th>
                 <th>Tổng tiền</th>
-                <th>Option</th>
+                <th></th>
             </tr>
 
             @foreach (var item in ViewBag.cart)
@@ -50,24 +51,24 @@
     </table>
     <br>
     
-</div>*@
+</div>
 
 <div class="cart__body">
     
     <form method="POST" asp-controller="Carrt" asp-action="Index" id="getinfo_form">
-        <div class="row">
-            <div class="col-lg-8 cart__items-box">
-                <a class="btn btn-danger" asp-controller="SanPham" asp-action="index">Tiếp tục mua sắm</a>
+        <div class="row pb-5">
+            <div class="col-lg-6 cart__items-box text-left">
+                <a class="btn btn-danger" style="color: #fff; background-color: coral; border-color: coral;" asp-controller="SanPham" asp-action="index">Tiếp tục mua sắm</a>
                 @if (ViewBag.cart == null)
                 {
-                    <div class="emptyCart">
-                        <img src="~/Content/images/empty_cart.png" alt="">
+                    <div class="emptyCart text-center">
+                        <img height="30%" src="~/Content/images/empty_cart.png" alt="#">
                     </div>
                 }
                 else
                 {
                     <div class="cart__items">
-                        <div class="row">
+                        <div class="row pb-5">
                             @foreach (var item in ViewBag.cart)
                             {
                                 <div class="col-sm-3 col-5 mt-2">
@@ -107,9 +108,9 @@
 
             </div>
 
-            <div class="col-lg-4" style="padding-left: 20px; padding-right: 10px;">
+            <div class="col-lg-5" style="padding-left: 20px; padding-right: 10px;">
                 <div>
-                    <div class="cart__info">
+                    <div class="cart__info pb-5">
                         <div class="body__mainTitle">
                             <h2>ĐỊA CHỈ NHẬN HÀNG</h2>
                         </div>
@@ -175,7 +176,7 @@
                         </div>
 
                         <div class="total">
-                            <h5>Tổng thanh toán</h5>
+                            <span style="font-size: 1.7rem; color: coral; font-weight: 600;">Tổng thanh toán</span>
                             <br>
 
                             <div class="product__pride-newPride" style="font-size: 25px;">
@@ -292,4 +293,4 @@
             })
         })
     })
-//]]></script>
+//]]></script>  

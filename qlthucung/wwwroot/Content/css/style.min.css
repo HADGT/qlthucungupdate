@@ -127,7 +127,7 @@ a:hover {
 
 .login_list {
 	position: absolute;
-	top: 35px;
+	top: 45px;
 	left: -90px;
 	display: none;
 	justify-content: left;
@@ -137,7 +137,7 @@ a:hover {
 	list-style: none;
 	line-height: 40px;
 	text-align: left;
-	background: #fff;
+	background: #000;
 	border: 1px solid #3333331a;
 }
 
@@ -147,12 +147,8 @@ a:hover {
 		padding: 10px;
 	}
 
-		.login_list > li:hover {
-			background: #f1f1f1;
-		}
-
 		.login_list > li > a {
-			color: black;
+			color: white;
 		}
 
 	.login_list active {
@@ -787,16 +783,19 @@ i.fas.fa-chevron-up {
 
 .product__cart {
 	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	justify-items: stretch;
+	flex-wrap: nowrap;
 }
 
 .product__cart-add {
-	padding: 15px;
-	border: 1px solid var(--mainColor);
-	color: var(--mainColor);
+	padding: 20px;
+	background-color: var(--mainColor);
+	color: #fff;
 	border-radius: 90px;
-	background-color: transparent;
-	font-weight: bold;
-	text-align: center;
+	text-decoration: none;
+	border-color: transparent;
 }
 
 .product__cart-buy {
@@ -916,7 +915,6 @@ i.fas.fa-chevron-up {
 	background: #fff;
 	padding: 10px 30px;
 	margin-top: 20px;
-	border-bottom: 1px solid #b3b3b3;
 }
 
 	.cart__items > hr {
@@ -927,11 +925,11 @@ i.fas.fa-chevron-up {
 	margin: 0 auto;
 	background: #fff;
 	border-radius: 10px;
-	padding: 10px 30px;
+	padding: 10px;
 	padding-bottom: 30px;
 	box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
 	margin-top: 20px;
-	padding-bottom: 62px;
+	margin-inline: initial;
 }
 
 .cart__items-img {
@@ -968,12 +966,14 @@ i.fas.fa-chevron-up {
 .phuongthuctt {
 	line-height: 40px;
 	font-size: 20px;
+	text-align: justify;
+	padding-top: 15px;
 }
 
 .total {
 	margin-top: 20px;
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-around;
 	align-items: center;
 	font-size: 20px;
 }
@@ -1050,7 +1050,7 @@ i.fas.fa-chevron-up {
 }
 
 	.address > h6 {
-		font-size: 13px;
+		font-size: 18px;
 		font-weight: 400;
 		margin-right: 10px;
 	}
@@ -1139,10 +1139,12 @@ footer {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	margin: auto;
 }
 
 	.emptyCart > img {
-		width: 200px;
+		width: 100%;
+		padding-block: 5rem;
 	}
 
 .cod {
@@ -1479,7 +1481,11 @@ footer {
 .fix-width {
 	overflow-y: hidden;
 	overflow-x: auto;
+	text-align: center;
 	-webkit-overflow-scrolling: touch;
+	font-size: 1rem;
+	color: coral;
+	font-family: SANS-SERIF;
 }
 
 .table {

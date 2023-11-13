@@ -66,7 +66,7 @@
                 Mô tả ngắn
             </div>
             <hr />
-            <form class="row d-flex" action="" method="POST" style="flex-wrap: nowrap; justify-content: flex-start; align-items: center; width: 75%; text-align: center; margin: inherit;">
+            <form class="row d-flex" action="" method="POST" style="justify-content: flex-start; align-items: center; text-align: center; margin: inherit; padding-inline: 10%;">
                 <div class="number">
                     <span>
                         Số lượng tồn
@@ -83,58 +83,53 @@
                 }
                 else
                 {
-                    <div class="product__cart">
-                <a asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp" class="product__cart-add" name="add-to-cart" onclick="alert('Thêm vào giỏ hàng thành công!')">
-                Thêm vào giỏ hàng
-                </a>
-                <a asp-controller="cart" asp-action="buy" asp-route-id="@Model.Masp" class="product__cart-buy" name="buy-now">Mua ngay</a>
-                </div>
-
                     <div class="number d-flex">
                         <div>Số lượng: </div>
                         <div class="number__count pl-2">
                             <input type="number" value="1" name="soluong" class="list-group m-0 p-0 text-center w-25">
                         </div>
                     </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; white-space: nowrap;">
+                        <div class="row d-flex" style="flex-wrap: nowrap; justify-content: flex-end; align-items: center; text-align: right; padding-block: 20px;">
+                            <div class="product__pride">
+                                @if (Model.Giamgia == 0 || Model.Giamgia == null)
+                                {
+                                    <div class="product__pride-newPride" style="font-size: 40px; text-align: start;">
+                                        <span class="Price">
+                                            <bdi>
+                                                @string.Format("{0:N0}", Model.Giakhuyenmai)
+                                                <span class="currencySymbol">₫</span>
+                                            </bdi>
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="product__pride-oldPride" style="font-size: 20px; text-align: start;">
+                                        <span class="Price">
+                                            <bdi>
+                                                @string.Format("{0:N0}", Model.Giaban)
+                                                <span class="currencySymbol">₫</span>
+                                            </bdi>
+                                        </span>
+                                    </div>
+                                    <div class="product__pride-newPride" style="font-size: 30px; text-align: start;">
+                                        <span class="Price">
+                                            <bdi>
+                                                @string.Format("{0:N0}", Model.Giakhuyenmai)
+                                                <span class="currencySymbol">₫</span>
+                                            </bdi>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="product__cart">
+                            <button type="submit" class="product__cart-add" asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp">Thêm vào giỏ hàng</button>
+                        </div>
+                    </div>
                 }
             </form>
-            <div class="row d-flex" style="flex-wrap: nowrap; justify-content: flex-start; align-items: center; width: 65%; text-align: center; margin: inherit; padding-inline: 15px; padding-block: 20px;">
-                <div class="product__pride">
-                    @if (Model.Giamgia == 0 || Model.Giamgia == null)
-                    {
-                        <div class="product__pride-newPride" style="font-size: 40px; text-align: start;">
-                            <span class="Price">
-                                <bdi>
-                                    @string.Format("{0:N0}", Model.Giakhuyenmai)
-                                    <span class="currencySymbol">₫</span>
-                                </bdi>
-                            </span>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="product__pride-oldPride" style="font-size: 20px; text-align: start;">
-                            <span class="Price">
-                                <bdi>
-                                    @string.Format("{0:N0}", Model.Giaban)
-                                    <span class="currencySymbol">₫</span>
-                                </bdi>
-                            </span>
-                        </div>
-                        <div class="product__pride-newPride" style="font-size: 30px; text-align: start;">
-                            <span class="Price">
-                                <bdi>
-                                    @string.Format("{0:N0}", Model.Giakhuyenmai)
-                                    <span class="currencySymbol">₫</span>
-                                </bdi>
-                            </span>
-                        </div>
-                    }
-                </div>
-                <div class="product__cart">
-                    <button type="submit" class="product__cart-add" style="text-align: end;" asp-controller="cart" asp-action="addtocart" asp-route-id="@Model.Masp">Thêm vào giỏ hàng</button>
-                </div>
-            </div>
         </div>
     </div>
 

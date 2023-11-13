@@ -24,7 +24,7 @@
     <link href="~/Content/css1/Adminstyle.css" rel="stylesheet" />
 </head>
 <body id="page-top">
-    <header class="header">
+    <header class="header">x
         <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-black d-flex" id="mainNav">
             <div class="container pr-1">
                 <a class="navbar-brand text-center" href="/">Shoppet</a>
@@ -45,7 +45,7 @@
                         <li class="nav-item"><a class="nav-link" href="http://localhost:28241/DichVu">Dịch vụ</a></li>
                         <li class="nav-item"><a class="nav-link" href="#Tintuc">Tin tức</a></li>
                         <li class="nav-item"><a class="nav-link" href="#Thongtin">Thông tin</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#Lienhe">Liên hệ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="http://localhost:28241/#Lienhe">Liên hệ</a></li>
                         <li style="display: flex; align-items: center;">
                             <div class="login pr-3 pl-2" id="loginClick">
                                 @if (User.Identity.IsAuthenticated)
@@ -55,7 +55,7 @@
 
                                     </span>
 
-                                    <ul class="login_list">
+                                    <ul class="login_list position-absolute">
                                         <li><a href="http://localhost:28241/Shared/profile">Thông tin cá nhân</a></li>
                                         @if (@User.Identity.Name == "Admin")
                                         {
@@ -64,7 +64,7 @@
                                         <li><a asp-controller="DonHangs" asp-action="Details">Đơn hàng</a></li>
                                         <li>
                                             <form asp-controller="Security" asp-action="SignOut" method="post">
-                                                <button type="submit" style="border: none; outline: none; background: transparent;">
+                                                <button type="submit" style="border: none; outline: none; background: transparent;color: white; text-transform: uppercase;">
                                                     Đăng xuất &nbsp;<span class="fas fa-sign-out-alt"></span>
                                                 </button>
                                             </form>
@@ -115,7 +115,7 @@
     <div class="go-to-top"><i class="fas fa-chevron-up"></i></div>
 
     @RenderBody()
-
+    
     <footer class="text-center bg-dark text-muted" id="Thongtin">
         <!-- Section: Social media -->
         <section class="d-flex justify-content-center justify-content-lg-between borderhead">

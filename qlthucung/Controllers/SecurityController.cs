@@ -38,11 +38,11 @@ namespace qlthucung.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!roleManager.RoleExistsAsync("User").Result) //staff và chỉnh role bên này
+                if (!roleManager.RoleExistsAsync("Admin").Result) //staff và chỉnh role bên này
                 {
                     var role = new AppIdentityRole();
-                    role.Name = "User"; //staff
-                    role.Description = "User can Perform CRUD Employee";
+                    role.Name = "Admin"; //staff
+                    role.Description = "Admin can Perform CRUD Employee";
                     var roleResult = roleManager.CreateAsync(role).Result;
                 }
 
@@ -55,7 +55,7 @@ namespace qlthucung.Controllers
                 var result = userManager.CreateAsync(user, register.Password).Result;
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "User").Wait(); //"User" thay bằng staff
+                    userManager.AddToRoleAsync(user, "Admin").Wait(); //"User" thay bằng staff
                     return RedirectToAction("SignIn", "Security");
                 }
                 else

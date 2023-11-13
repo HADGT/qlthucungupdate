@@ -87,3 +87,11 @@ input .form-control {
     margin-top: 1rem;
     border-radius: 5px;
 }
+
+.btn.form-control a.account-register {
+    color: white;
+}
+
+.btn.form-control a.account-register:hover {
+    color: gray;
+}
