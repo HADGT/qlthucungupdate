@@ -717,10 +717,13 @@ i.fa.fa-chevron-right.next.slick-arrow2 {
     position: fixed;
     display: none;
     z-index: 1001;
-    right: 10px;
+    right: 5px;
     bottom: 200px;
     cursor: pointer;
     background: var(--mainColor);
+    padding: 10px;
+    border-radius: 100%;
+    padding-inline: 15px
 }
 
     .go-to-top:hover {

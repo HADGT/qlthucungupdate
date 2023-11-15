@@ -417,30 +417,6 @@ a:hover {
 		object-fit: cover;
 	}
 
-.prev {
-	position: absolute;
-	z-index: 1;
-	color: rgba(255, 255, 255, 0.5);
-	top: 50%;
-	left: 15px;
-	font-size: 40px;
-}
-
-.next {
-	position: absolute;
-	z-index: 1;
-	color: rgba(255, 255, 255, 0.5);
-	top: 50%;
-	right: 15px;
-	font-size: 40px;
-}
-
-	.next:hover,
-	.prev:hover {
-		color: #fff;
-		cursor: pointer;
-	}
-
 /*carosel multi pic*/
 .post-slider2 {
 	position: relative;
@@ -486,39 +462,6 @@ i.fa.fa-chevron-left.prev.slick-arrow2 {
 i.fa.fa-chevron-right.next.slick-arrow2 {
 	line-height: 80px;
 }
-
-.prev2 {
-	position: absolute;
-	top: 50%;
-	left: 0;
-	transform: translateY(-50%);
-	z-index: 1;
-	line-height: 80px;
-	text-align: center;
-	color: rgb(88 85 85 / 50%);
-	font-size: 30px;
-	opacity: 0.7;
-}
-
-.next2 {
-	position: absolute;
-	top: 50%;
-	right: 0;
-	transform: translateY(-50%);
-	z-index: 1;
-	line-height: 80px;
-	text-align: center;
-	color: rgb(88 85 85 / 50%);
-	font-size: 30px;
-	opacity: 0.7;
-}
-
-	.prev2:hover,
-	.next2:hover {
-		cursor: pointer;
-		opacity: 1;
-	}
-
 
 .body {
 	width: 70%;
@@ -727,6 +670,10 @@ i.fas.fa-chevron-up {
 	padding: 10px;
 	font-size: 20px;
 	color: #fff;
+}
+
+.banner-top.banner-top-2.row > div{
+	padding-block: 1pt;
 }
 
 .product__details {
