@@ -1269,11 +1269,14 @@ footer {
 }
 
     .service-banner .boxservice {
-        padding: 30px;
-        max-width: 530px;
-        background: #F7F7F7;
-        border-radius: 10px;
-        transform: translate(100px, 0);
+        background-color: coral;
+        padding: 30px 0;
+        border-radius: 20px;
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        width: 95%;
     }
 
 .service-list__content-box {
