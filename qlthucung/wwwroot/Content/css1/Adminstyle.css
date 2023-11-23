@@ -99,6 +99,11 @@
 	background-color: rgb(0,0,0);
 	margin: 0;
 	width: -webkit-fill-available;
+	background-color: black !important;
+	color: coral;
+	box-sizing: border-box;
+	white-space: nowrap;
+	padding-top: 6pt;
 }
 
 @media (min-width: 992px) {
@@ -106,22 +111,12 @@
 		display: block !important;
 		flex-basis: auto;
 		animation-timing-function: ease-out;
-		padding-inline: 2rem;
+		padding-left: 4rem;
 	}
 }
 
 .navbar > .container, .navbar > .container-fluid, .navbar > .container-sm, .navbar > .container-md, .navbar > .container-lg, .navbar > .container-xl, .navbar > .container-xxl {
 	display: contents;
-}
-
-#mainNav {
-	background-color: black !important;
-	width: 100%;
-	margin: 0;
-	color: coral;
-	box-sizing: border-box;
-	white-space: nowrap;
-	padding-top: 6pt;
 }
 
 .navbar {

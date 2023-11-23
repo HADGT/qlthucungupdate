@@ -16,7 +16,6 @@ body {
 }
 
 .div-light {
-    border: 2px solid #f5a689;
     box-shadow: 0 0 10px #ff4400ba, inset 0 0 20px coral;
     background-color: rgb(255 127 80 / 95%);
     height: 40px;
