@@ -106,6 +106,7 @@
 		display: block !important;
 		flex-basis: auto;
 		animation-timing-function: ease-out;
+		padding-inline: 2rem;
 	}
 }
 
@@ -116,16 +117,16 @@
 #mainNav {
 	background-color: black !important;
 	width: 100%;
-	padding-top: 0;
 	margin: 0;
 	color: coral;
 	box-sizing: border-box;
 	white-space: nowrap;
+	padding-top: 6pt;
 }
 
 .navbar {
 	width: 96%;
-	margin-right: 1rem;
+	padding-inline: 1rem;
 }
 
 .navbar > .container, .navbar > .container-fluid {
@@ -471,23 +472,12 @@ i.fas.fa-chevron-up {
 }
 
 .form {
-	width: 360px;
 	min-height: 100px;
-	padding: 32px 24px;
 	text-align: center;
 	background: rgba(255, 255, 255, 0.5);
 	border-radius: 5px;
-	margin: 24px;
 	align-self: center;
 	box-shadow: 0 2px 5px 0 rgba(51, 62, 73, 0.1);
-}
-
-@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-	.form {
-		-webkit-backdrop-filter: blur(10px);
-		backdrop-filter: blur(10px);
-		background-color: rgba(255, 255, 255, 0.5);
-	}
 }
 
 .form .heading {
@@ -496,7 +486,6 @@ i.fas.fa-chevron-up {
 
 .form-group {
 	display: flex;
-	margin-bottom: 16px;
 	flex-direction: column;
 }
 
