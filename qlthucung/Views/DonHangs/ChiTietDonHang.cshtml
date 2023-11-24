@@ -5,29 +5,67 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="body ViewPrint" style="margin-top: 50px;">
-
-    <h3>Thông tin khách hàng</h3>
-    @foreach (var m in ViewBag.ViewChiTietDH2)
-    {
-        <h5>Họ tên: @m.khachhang.Hoten</h5>
-        <h5>Email: @m.khachhang.Email</h5>
-        <h5>Địa chỉ: @m.khachhang.Diachi</h5>
-        <h5>Số điện thoại: @m.khachhang.Dienthoai</h5>
+<style>
+    h3.text-title, h2.text-title {
+        font-family: cursive;
+        color: coral;
+        text-align: center;
+        padding-block: 10px;
+        font-size: xx-large;
     }
 
-    <h2>Chi tiết sản phẩm</h2>
+    button#Print {
+        color: #fff;
+        background-color: coral;
+        border-color: coral;
+        padding-inline: 30px;
+    }
+
+    .link-click {
+        color: white;
+        text-decoration: auto;
+        font-size: large;
+        border: 1px solid transparent;
+        background: coral;
+        border-radius: 5px;
+        padding-inline: 20px;
+        padding-block: 5px;
+    }
+
+    .count.d-flex {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        padding-inline: 15px;
+    }
+</style>
+
+<div class="body ViewPrint" style="margin-top: 15px;">
+    <h3 class="text-title">Thông tin đơn hàng</h3>
+    <ul class="col-md-12 d-flex pb-4 py-3 text-dark" style="font-style: oblique; list-style: none; justify-content: space-between; padding-inline: 4%;">
+        @foreach (var m in ViewBag.ViewChiTietDH2)
+        {
+            <li class="col-md-6 text-start text-left">
+                <div>Họ tên: @m.khachhang.Hoten</div>
+                <div>Email: @m.khachhang.Email</div>
+            </li>
+            <li class="col-md-6 text-end text-left">
+                <div>Địa chỉ: @m.khachhang.Diachi</div>
+                <div>Số điện thoại: @m.khachhang.Dienthoai</div>
+            </li>
+        }
+    </ul>
+    <h2 class="py-2 text-center">Chi tiết sản phẩm</h2>
 
     <div class="fix-width scroll-inner">
         <table class="table table-striped">
             <tr>
-                <th>mã đơn</th>
-                <th>tên sp</th>
-                <th>hình</th>
-                <th>giá</th>
-                <th>giảm giá</th>
-                <th>giá km</th>
-                <th>số lượng</th>
+                <th>Mã đơn</th>
+                <th>Tên sản phẩm</th>
+                <th>Hình</th>
+                <th>Giá</th>
+                <th>Giảm giá</th>
+                <th>Giá khuyến mại</th>
+                <th>Số lượng</th>
             </tr>
 
             @foreach (var item in ViewBag.ViewSP)
@@ -63,31 +101,29 @@
     </div>
     @foreach (var item in Model.Take(1))
     {
-        <tr>
-            <td>
+        <div class="count d-flex">
+            <div>
                 <strong> Tổng số lượng</strong>
 
                 @Html.DisplayFor(modelItem => item.Tongsoluong)
-            </td>
-            <td>
+            </div>
+            <div>
                 <strong> Tổng giá tiền</strong>
 
                 @string.Format("{0:N0}", item.Tonggia) vnđ
-            </td>
-
-        </tr>
+            </div>
+        </div>
     }
 
 
 </div>
 
-<div class="body" style="border: none; box-shadow: none; border-radius: none; margin-top: 10px;">
-    <div>
-        <button id="Print" class="btn btn-primary">Print</button>
+<div class="body d-flex" style="border: none; margin-top: 10px; justify-content: space-between; padding-inline: 10px;">
+    <div class="mt-2 mb-2 link-click">
+        <a asp-action="Details" class="text-decoration-none text-white">Quay lại</a>
     </div>
-
-    <div class="mt-2">
-        <a asp-action="Details">Quay lại</a>
+    <div>
+        <button id="Print" class="btn">Print</button>
     </div>
 </div>
 
