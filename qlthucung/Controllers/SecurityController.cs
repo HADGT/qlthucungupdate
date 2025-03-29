@@ -13,6 +13,7 @@ namespace qlthucung.Controllers
 {
     public class SecurityController : Controller
     {
+        private readonly AppDbContext _context;
         private readonly UserManager<AppIdentityUser> userManager;
         private readonly RoleManager<AppIdentityRole> roleManager;
         private readonly SignInManager<AppIdentityUser> signInManager;
@@ -38,29 +39,47 @@ namespace qlthucung.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!roleManager.RoleExistsAsync("Admin").Result) //staff và chỉnh role bên này
+                // Kiểm tra xem username đã tồn tại chưa
+                var existingUser = userManager.FindByNameAsync(register.UserName).Result;
+                if (existingUser != null)
                 {
-                    var role = new AppIdentityRole();
-                    role.Name = "Admin"; //staff
-                    role.Description = "Admin can Perform CRUD Employee";
+                    ModelState.AddModelError("", "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác.");
+                    return View(register); // Trả về ngay nếu username đã tồn tại
+                }
+
+                // Kiểm tra role "Admin" đã tồn tại chưa
+                if (!roleManager.RoleExistsAsync("Admin").Result)
+                {
+                    var role = new AppIdentityRole
+                    {
+                        Name = "Admin",
+                        Description = "Admin can Perform CRUD Employee"
+                    };
                     var roleResult = roleManager.CreateAsync(role).Result;
                 }
 
-                var user = new AppIdentityUser();
-                user.UserName = register.UserName;
-                user.Email = register.Email;
-                user.FullName = register.FullName;
-                user.BirthDate = register.BirthDate;
+                // Tạo user mới
+                var user = new AppIdentityUser
+                {
+                    UserName = register.UserName,
+                    Email = register.Email,
+                    FullName = register.FullName,
+                    BirthDate = register.BirthDate
+                };
 
                 var result = userManager.CreateAsync(user, register.Password).Result;
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "Admin").Wait(); //"User" thay bằng staff
+                    userManager.AddToRoleAsync(user, "Admin").Wait();
                     return RedirectToAction("SignIn", "Security");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Loi Dang Ky");
+                    // Thêm từng lỗi vào ModelState để hiển thị
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
                 }
             }
             return View(register);
@@ -84,7 +103,7 @@ namespace qlthucung.Controllers
                 if (result.Succeeded)
                 {
                     HttpContext.Session.SetString("username", signIn.UserName);
-                    return RedirectToAction("Index", "SanPham");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 else

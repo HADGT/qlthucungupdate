@@ -25,10 +25,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.Ngaygiao)
             </th>
-
             <th></th>
+            @if (Model.Any(item => item.Giaohang == "chưa thanh toán"))
+            {
+                <th>Thanh toán</th>
+            }
+            @if (Model.Any(item => item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành"))
+            {
+                <th>Hủy đơn</th>
+            }
         </tr>
-
 
         @foreach (var item in Model)
         {
@@ -56,9 +62,13 @@
                     {
                         <div style="color: green;">@item.Giaohang</div>
                     }
-                    else if (item.Giaohang == "hủy")
+                    else if (item.Giaohang == "Đã hủy")
                     {
                         <div style="color: red;">@item.Giaohang</div>
+                    }
+                    else if (item.Giaohang == "đã hoàn thành")
+                    {
+                        <div style="color: gray;">@item.Giaohang</div>
                     }
                 </td>
                 <td>
@@ -71,17 +81,19 @@
                 <td>
                     <a asp-action="ChiTietDonHang" asp-route-id="@item.Madon">Chi tiết đơn hàng</a>
                 </td>
-
-                @*@if (item.Giaohang == "chờ xử lý")
+                @if (item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành" && item.Giaohang != "Đã hủy")
                 {
                     <td>
-                        @Html.ActionLink("hủy đơn", "HuyDon", new { id = item.Madon })
+                        @Html.ActionLink("Hủy đơn", "HuyDon", new { id = item.Madon })
                     </td>
-                }*@
-
+                }
+                else
+                {
+                    <td></td>
+                }
             </tr>
         }
-       
+
     </table>
 
 </div>

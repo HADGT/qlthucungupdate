@@ -19,14 +19,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="~/Content/css1/style.min/css" rel="stylesheet" />
     <link href="~/Content/css1/styles.css" rel="stylesheet" />
     <link href="~/Content/css1/Adminstyle.css" rel="stylesheet" />
 </head>
 <body id="page-top">
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-black d-flex" id="mainNav" style="padding-inline: 1rem;">
-            <div class="container pr-1">
+            <div class="container justify-content-between pr-1">
                 <a class="navbar-brand text-center" href="/">Shoppet</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
@@ -34,17 +33,16 @@
                 </button>
                 <div class="collapse navbar-collapse pr-1" id="navbarResponsive">
                     <ul class="justify-content-center ms-auto navbar-nav py-4 py-lg-0 text-uppercase">
-                        <li class="navbar-brand text-center" id="formSearch">
+                        <li class="navbar-brand text-center w-100" id="formSearch">
                             <form method="get" asp-controller="SanPham" asp-action="Search" class="navbar_search">
-                                <input class="search" id="message" name="search" placeholder="Nhập để tìm kiếm" type="text" value="">
+                                <input class="search w-auto" id="message" name="search" placeholder="Nhập để tìm kiếm" type="text" value="">
                                 <i class="fa fa-search" id="searchBtn" type="submit" style="color:coral"></i>
                             </form>
                         </li>
                         <li class="nav-item"><a class="nav-link pl-1" href="/">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="http://localhost:28241/SanPham">Sản phầm</a></li>
-                        <li class="nav-item"><a class="nav-link" href="http://localhost:28241/DichVu">Dịch vụ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#Tintuc">Tin tức</a></li>
-                        <li class="nav-item"><a class="nav-link" href="http://localhost:28241/#Lienhe">Liên hệ</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="SanPham">Sản phầm</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="DichVu">Dịch vụ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="http://localhost:5172/#Lienhe">Liên hệ</a></li>
                         <li style="display: flex; align-items: center;">
                             <div class="login pl-2" id="loginClick">
                                 @if (User.Identity.IsAuthenticated)
@@ -55,7 +53,7 @@
                                     </span>
 
                                     <ul class="login_list">
-                                        <li><a href="http://localhost:28241/Shared/profile">Thông tin cá nhân</a></li>
+                                        <li><a href="http://localhost:5172/Shared/profile">Thông tin cá nhân</a></li>
                                         @if (@User.Identity.Name == "Admin")
                                         {
                                             <li><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
@@ -118,15 +116,12 @@
     <footer class="text-center bg-black text-muted" id="Thongtin">
         <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
             Design by:
-            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Phạm Quang Đạt and Dương Thu Hà</a>
+            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">"Shoppet - Nâng niu từng bước chân, chăm sóc trọn vẹn yêu thương!"🐾❤️</a>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
     <!-- SB Forms JS-->
-    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/Content/scripts/script.js" asp-append-version="true"></script>

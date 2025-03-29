@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using qlthucung.Helpers;
 using qlthucung.Models;
 using System;
@@ -13,21 +15,23 @@ namespace qlthucung.Controllers
     {
 
         private readonly AppDbContext _context;
+        private ILogger<string> _logger;
 
-        public CartController(AppDbContext context)
+        public CartController(AppDbContext context, ILogger<string> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             var cart = SessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
-            if(cart != null)
+            if (cart != null)
             {
                 ViewBag.cart = cart;
                 ViewBag.total = cart.Sum(item => item.Product.Giakhuyenmai * item.Quantity);
-                if(ViewBag.total == null)
+                if (ViewBag.total == null)
                 {
                     ViewBag.total = 0;
                 }
@@ -36,57 +40,113 @@ namespace qlthucung.Controllers
 
             string username = HttpContext.Session.GetString("username");
 
-            ViewBag.info = _context.AspNetUsers.Where(p => p.UserName == username).ToList();
+            var user = _context.AspNetUsers
+                   .Where(p => p.UserName == username)
+                   .FirstOrDefault(); // Lấy 1 user thay vì List
+
+            if (user != null)
+            {
+                ViewBag.fullName = user.FullName;
+                ViewBag.email = user.Email;
+                ViewBag.phoneNumber = user.PhoneNumber;
+                ViewBag.birthDate = user.BirthDate;
+                ViewBag.username = user.UserName;
+            }
 
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index([Bind("Hoten,Tendangnhap,Matkhau,Email,Diachi,Dienthoai,Ngaysinh,RoleId,Status,Resetpasswordcode")] KhachHang kh, DonHang dh, ChiTietDonHang ctdh, AspNetUser user, IFormCollection form)
+        public IActionResult Index([Bind("Hoten,Tendangnhap,Matkhau,Email,Diachi,Dienthoai,Ngaysinh,RoleId,Status,Resetpasswordcode")] KhachHang kh, DonHang dh, IFormCollection form, CheckoutModel model, MoMoPayment momo)
         {
-            kh.Makh = Convert.ToInt32(user.Id);
-            kh.Hoten = user.FullName;
-            kh.Tendangnhap = HttpContext.Session.GetString("username");
-            //kh.Matkhau = "123";
-            kh.Email = user.Email;
-            kh.Diachi = form["sonha"] + " " + form["xa"] + " " + form["tinh"];
-            kh.Dienthoai = "123456789";
-            kh.Ngaysinh = user.BirthDate;
-            kh.RoleId = 2;
-            kh.Status = 1;
-            kh.Resetpasswordcode = "123";
+            model.Tinh = form["Tinh"];
+            if (!string.IsNullOrEmpty(model.Tinh) && model.Tinh.Contains(","))
+            {
+                model.Tinh = model.Tinh.Split(',')[1].Trim(); // Lấy phần tên sau dấu phẩy
+            }
+            _logger.LogInformation("Dữ liệu tỉnh/thành phố: " + model.Tinh);
+            string customerId = _context.AspNetUsers
+                .Where(u => u.UserName == model.Username)
+                .Select(u => u.Id)
+                .FirstOrDefault();
 
-            _context.KhachHangs.Add(kh);
-            _context.SaveChanges();
+            if (customerId == null)
+            {
+                kh.Makh = customerId;
+                kh.Hoten = model.FullName;
+                kh.Tendangnhap = model.Username;
+                kh.Email = model.Email;
+                kh.Diachi = model.SoNha + " " + model.Xa + " " + model.Tinh;
+                kh.Dienthoai = model.PhoneNumber;
+                kh.Ngaysinh = model.BirthDate;
+                kh.RoleId = model.Username == "Admin" ? 1 : (model.Username == "Staff" ? 3 : 2);
+                kh.Status = 1;
+                kh.Resetpasswordcode = "123";
 
-            dh.Makh = kh.Makh;
-            dh.Thanhtoan = "COD";
+                _context.KhachHangs.Add(kh);
+            }
+
+            // Tạo đơn hàng mới
+            dh.Makh = customerId;
+            dh.Thanhtoan = model.PaymentMethod;
             dh.Giaohang = "chờ xử lý";
             dh.Ngaydat = DateTime.Now;
-
             _context.DonHangs.Add(dh);
             _context.SaveChanges();
+            HttpContext.Session.SetInt32("lastOrderId", dh.Madon);
 
             var cart = SessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
 
-            foreach(var item in cart)
+            // Thêm chi tiết đơn hàng
+            foreach (var item in cart)
             {
-                ctdh.Madon = dh.Madon;
-                ctdh.Masp = item.Product.Masp;
-                ctdh.Soluong = item.Quantity;
-                ctdh.Gia = item.Product.Giakhuyenmai;
-                ctdh.Tongsoluong = cart.Sum(item => item.Quantity);
-                ctdh.Tonggia = cart.Sum(item => item.Product.Giakhuyenmai * item.Quantity);
-                ctdh.Status = 0;
+                var ctdh = new ChiTietDonHang
+                {
+                    Madon = dh.Madon,
+                    Masp = item.Product.Masp,
+                    Soluong = item.Quantity,
+                    Gia = item.Product.Giakhuyenmai,
+                    Tongsoluong = cart.Sum(i => i.Quantity),
+                    Tonggia = cart.Sum(i => i.Product.Giakhuyenmai * i.Quantity),
+                    Status = 0
+                };
 
                 _context.ChiTietDonHangs.Add(ctdh);
-                _context.SaveChanges();
-            }
 
+                // Cập nhật số lượng tồn của sản phẩm
+                var product = _context.SanPhams.FirstOrDefault(p => p.Masp == item.Product.Masp);
+                if (product != null)
+                {
+                    product.Soluongton -= item.Quantity;
+                }
+            }
+            _context.SaveChanges();
+
+            _logger.LogInformation("Mã đơn hàng vừa tạo: " + dh.Madon);
+            HttpContext.Session.SetInt32("lastOrderId", dh.Madon);
+
+            if (model.PaymentMethod == "vnpay")
+            {
+                HttpContext.Session.SetString("Ordermodel", JsonConvert.SerializeObject(model));
+                return RedirectToAction("Payment", "Checkout");
+            }
+            else if (model.PaymentMethod == "cod")
+            {
+                // tạo đơn momo pay
+                momo.PaymentId = Guid.NewGuid().ToString();
+                momo.Madon = dh.Madon;
+                momo.Magiaodich = "cod" + dh.Madon;
+                momo.Amount = Convert.ToDecimal(cart.Sum(i => i.Product.Giakhuyenmai.GetValueOrDefault() * i.Quantity));
+                momo.Trangthaithanhtoan = "Chưa thanh toán";
+                momo.Tinnhantrave = "Chưa thanh toán";
+                _logger.LogInformation("Payment method:" + momo);
+                _context.MoMoPayments.Add(momo);
+                _context.SaveChanges();
+                return RedirectToAction("DatHangThanhCong");
+            }
             return RedirectToAction("DatHangThanhCong");
         }
-
         public IActionResult DatHangThanhCong()
         {
             return View();
@@ -101,12 +161,17 @@ namespace qlthucung.Controllers
 
             int x = Convert.ToInt32(form["soluong"]);
 
-            if(x < 1 || x > produc.Soluongton)
+            if (x < 1 || x > produc.Soluongton)
             {
                 TempData["slError"] = "Số lượng ko được < 0 và > số lượng tồn";
             }
             else
             {
+                string username = HttpContext.Session.GetString("username");
+                if (username == null)
+                {
+                    return RedirectToAction("SignIn", "Security"); // Chuyển hướng đến trang đăng nhập
+                }
                 TempData["addSuccess"] = "Thêm vào giỏ hàng thành công!";
                 if (SessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart") == null) //chua có sp trong giỏ
                 {
@@ -144,9 +209,8 @@ namespace qlthucung.Controllers
 
             }
 
-            return RedirectToAction("Details","SanPham", new { id = id });
+            return RedirectToAction("Details", "SanPham", new { id = id });
         }
-
         [Route("remove/{id}")]
         public IActionResult Remove(int id)
         {
@@ -167,7 +231,7 @@ namespace qlthucung.Controllers
                 HttpContext.Session.SetString("countCart", cart.Count.ToString());
             }
 
-            if (cart.Count ==0)
+            if (cart.Count == 0)
             {
                 HttpContext.Session.Remove("cart");
                 HttpContext.Session.Remove("countCart");

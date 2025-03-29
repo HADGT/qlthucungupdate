@@ -136,8 +136,8 @@ namespace qlthucung.Migrations.AppDb
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("IdKh")
-                        .HasColumnType("int")
+                    b.Property<string>("IdKh")
+                        .HasColumnType("varchar(MAX)")
                         .HasColumnName("id_kh");
 
                     b.Property<int?>("IdSp")
@@ -212,8 +212,8 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("hoten");
 
-                    b.Property<int?>("Makh")
-                        .HasColumnType("int")
+                    b.Property<string>("Makh")
+                        .HasColumnType("varchar(MAX)")
                         .HasColumnName("makh");
 
                     b.Property<DateTime?>("Ngaydat")
@@ -256,8 +256,8 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("giaohang");
 
-                    b.Property<int?>("Makh")
-                        .HasColumnType("int")
+                    b.Property<string>("Makh")
+                        .HasColumnType("varchar(MAX)")
                         .HasColumnName("makh");
 
                     b.Property<DateTime?>("Ngaydat")
@@ -283,11 +283,10 @@ namespace qlthucung.Migrations.AppDb
 
             modelBuilder.Entity("qlthucung.Models.KhachHang", b =>
                 {
-                    b.Property<int>("Makh")
+                    b.Property<string>("Makh")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("makh")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("varchar(MAX)")
+                        .HasColumnName("makh");
 
                     b.Property<string>("Diachi")
                         .HasMaxLength(100)
@@ -362,6 +361,42 @@ namespace qlthucung.Migrations.AppDb
                         .HasName("PK__KhachHan__8AFACE3A2B34BEF9");
 
                     b.ToTable("KhachHangRoles");
+                });
+
+            modelBuilder.Entity("qlthucung.Models.MoMoPayment", b =>
+                {
+                    b.Property<string>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Madon")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Magiaodich")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Tinnhantrave")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Trangthaithanhtoan")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("Madon");
+
+                    b.ToTable("MoMoPayments");
                 });
 
             modelBuilder.Entity("qlthucung.Models.SanPham", b =>
@@ -517,6 +552,18 @@ namespace qlthucung.Migrations.AppDb
                         .HasConstraintName("FK__KhachHang__RoleI__2E1BDC42");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("qlthucung.Models.MoMoPayment", b =>
+                {
+                    b.HasOne("qlthucung.Models.DonHang", "DonHang")
+                        .WithMany()
+                        .HasForeignKey("Madon")
+                        .HasConstraintName("FK_MoMoPayments_Orders")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DonHang");
                 });
 
             modelBuilder.Entity("qlthucung.Models.SanPham", b =>

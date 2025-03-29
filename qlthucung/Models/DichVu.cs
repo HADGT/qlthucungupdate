@@ -35,7 +35,7 @@ namespace qlthucung.Models
         [Column("ngaydat", TypeName = "datetime")]
         public DateTime? Ngaydat { get; set; }
         [Column("makh")]
-        public int? Makh { get; set; }
+        public string Makh { get; set; }
 
         [ForeignKey(nameof(Makh))]
         [InverseProperty(nameof(KhachHang.DichVus))]

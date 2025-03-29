@@ -7,14 +7,14 @@
 
 <div class="col-lg-12 padding-8">
     @*<div class="d-flex justify-content-between">
-        <h2>Quản lý đơn hàng</h2>
-        @using (Html.BeginForm("Index", "QLDonHang", FormMethod.Post))
-        {
-            <h3>Tìm kiếm đơn theo ngày đặt</h3>
-            <input type="date" name="DonTheoNgay" required />
+    <h2>Quản lý đơn hàng</h2>
+    @using (Html.BeginForm("Index", "QLDonHang", FormMethod.Post))
+    {
+    <h3>Tìm kiếm đơn theo ngày đặt</h3>
+    <input type="date" name="DonTheoNgay" required />
 
-            <input type="submit" value="Kiểm tra" />
-        }
+    <input type="submit" value="Kiểm tra" />
+    }
     </div>*@
 
     <div class="body fix-width scroll-inner" style="margin: 50px 0;">
@@ -88,28 +88,41 @@
     </div>
 
     <!--Pagination-->
+    @{
+        int maxPagesToShow = 5; // Số trang tối đa hiển thị
+        int startPage = Math.Max(1, Model.PageIndex - maxPagesToShow);
+        int endPage = Math.Min(Model.TotalPages, Model.PageIndex + maxPagesToShow);
+    }
+
     <ul class="pagination justify-content-center" style="margin: 10px auto;">
         @if (Model.HasPreviousPage)
         {
-            <li class="page-item"><a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = Model.PageIndex - 1 })">Previous</a></li>
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = Model.PageIndex - 1 })">Previous</a>
+            </li>
         }
 
-        @for (int i = 1; i <= Model.TotalPages; i++)
+        @for (int i = startPage; i <= endPage; i++)
         {
             if (i == Model.PageIndex)
             {
-                <li class="page-item active"><a href="" class="page-link"> @i</a></li>
+                <li class="page-item active"><a class="page-link">@i</a></li>
             }
             else
             {
-                <li class="page-item"><a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = i })">@i</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = i })">@i</a>
+                </li>
             }
         }
 
         @if (Model.HasNextPage)
         {
-            <li class="page-item"><a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = Model.PageIndex + 1 })">Next</a></li>
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("QLDonHang", new { pageNumber = Model.PageIndex + 1 })">Next</a>
+            </li>
         }
     </ul>
+
 
 </div>

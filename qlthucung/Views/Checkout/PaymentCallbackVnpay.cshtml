@@ -1,0 +1,54 @@
+﻿@model qlthucung.Models.MoMoPayment
+@{
+    ViewData["Title"] = "PaymentCallbackVnpay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .product__cart {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        justify-items: stretch;
+        flex-wrap: nowrap;
+    }
+
+    .product__cart-add {
+        padding: 20px;
+        background-color: var(--mainColor);
+        color: #fff;
+        border-radius: 90px;
+        text-decoration: none;
+        border-color: transparent;
+    }
+
+    h1 {
+        color: coral;
+    }
+</style>
+<div class="cart__body">
+    <div class="row pb-5 pt-3 px-5 text-start">
+        <h1>Vnpay xin thông báo: @ViewBag.Trangthai với đơn hàng số @ViewBag.madon </h1>
+        <div>
+            <b>Order ID :</b> @Model.Magiaodich
+        </div>
+        <div>
+            <b>Thông tin đơn hàng:</b> @Model.Tinnhantrave
+        </div>
+        <div>
+            <b>Mã đơn thanh toán:</b> @Model.Madon
+        </div>
+        <div>
+            <b>Trạng thái thanh toán:</b> @Model.Trangthaithanhtoan
+        </div>
+        <div>
+            <b>Ngày thanh toán:</b> @Model.CreatedAt
+        </div>
+        <div>
+            <b>Số tiền:</b> @Model.Amount
+        </div>
+        <div class="product__cart justify-content-end">
+            <center><button class="product__cart-add" asp-action="Details" asp-controller="DonHangs">Lịch sử đơn hàng đã đặt</button></center>
+        </div>
+    </div>
+</div>
+

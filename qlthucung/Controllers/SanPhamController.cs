@@ -101,7 +101,7 @@ namespace qlthucung.Controllers
             }
 
             //random san pham
-                List<SanPham> products = _context.SanPhams.OrderBy(x => Guid.NewGuid()).Take(5).ToList();
+                List<SanPham> products = _context.SanPhams.OrderBy(x => Guid.NewGuid()).Skip(5).Take(5).ToList();
                 ViewBag.getSPRanDom = products;
 
             getThuVienAnhList(id);

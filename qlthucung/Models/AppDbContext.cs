@@ -27,6 +27,7 @@ namespace qlthucung.Models
         public virtual DbSet<SanPham> SanPhams { get; set; }
         public virtual DbSet<ThuVienAnh> ThuVienAnhs { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<MoMoPayment> MoMoPayments { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -156,6 +157,17 @@ namespace qlthucung.Models
                 entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
                     .IsUnique()
                     .HasFilter("([NormalizedUserName] IS NOT NULL)");
+            });
+
+            modelBuilder.Entity<MoMoPayment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentId);
+
+                entity.HasOne(e => e.DonHang)
+                    .WithMany()
+                    .HasForeignKey(e => e.Madon)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_MoMoPayments_Orders");
             });
 
             OnModelCreatingPartial(modelBuilder);

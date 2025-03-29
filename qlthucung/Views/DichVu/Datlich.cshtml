@@ -1,0 +1,86 @@
+﻿@model qlthucung.Models.DichVu
+@{
+    ViewData["Title"] = "Datlich";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Modal -->
+<style>
+    label {
+        font-family: "r0c0i Linotte", sans-serif;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 30px;
+        color: var(--mainColor);
+        padding-bottom: 10px;
+    }
+
+    input, .form-label, .form-control:focus, .form-control {
+        font-size: 16px;
+    }
+
+</style>
+<div class="w-75 m-auto p-5">
+    <h1 style="color: coral; text-align: center; top: 50%; left: 50%;">
+        Đặt lịch hẹn
+    </h1>
+
+    <form method="POST" asp-controller="DichVu" asp-action="DatLich" class="container mt-4">
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            @if (ViewBag.KhachHangName != null)
+            {
+                <input type="hidden" name="Username" value="@ViewBag.Username" />
+            }
+
+            <div class="form-group">
+                <label for="hoten" class="form-label pt-4 pb-0">Họ và Tên</label>
+                @Html.EditorFor(model => model.Hoten, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Hoten, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label pt-4 pb-0">Email</label>
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="sdt" class="form-label pt-4 pb-0">Số Điện Thoại</label>
+                @Html.EditorFor(model => model.Sdt, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Sdt, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="diachi" class="form-label pt-4 pb-0">Địa Chỉ</label>
+                @Html.EditorFor(model => model.Diachi, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Diachi, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="loaidv" class="form-label pt-4 pb-0">Dịch Vụ</label>
+                <select name="Tendichvu" class="form-control">
+                    <option value="Chăm sóc toàn diện">Chăm sóc toàn diện</option>
+                    <option value="Tắm, gội,...">Tắm, gội,...</option>
+                    <option value="Spa cho pet">Spa cho pet</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.Tendichvu, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="ngaydat" class="form-label pt-4 pb-0">Ngày Đặt</label>
+                <input type="date" name="Ngaydat" class="form-control" required />
+                @Html.ValidationMessageFor(model => model.Ngaydat, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group text-center mt-3">
+                <button type="submit" class="btn btn-primary mb-2">Xác Nhận</button>
+                <a asp-action="Index" asp-controller="DichVu" class="btn btn-primary">Quay lại</a>
+            </div>
+        </div>
+    </form>
+</div>

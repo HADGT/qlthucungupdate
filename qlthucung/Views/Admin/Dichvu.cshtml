@@ -1,0 +1,107 @@
+﻿@model PaginatedList<DichVu>
+
+@{
+    ViewData["Title"] = "Dichvu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="body fix-width scroll-inner pl-2 pr-2">
+    <!-- Form tìm kiếm -->
+    <form asp-action="Dichvu" method="get">
+        <div class="form-group">
+            <label for="searchTerm">Tìm kiếm:</label>
+            <input type="text" name="searchTerm" class="form-control" value="@ViewBag.SearchTerm" placeholder="Nhập tên khách hàng hoặc dịch vụ..." />
+        </div>
+
+        <div class="form-group">
+            <label for="ngaydat">Ngày đặt:</label>
+            <input type="date" name="ngaydat" class="form-control" value="@ViewBag.NgayDat" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </form>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Họ Tên
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Số điện thoại
+                </th>
+                <th>
+                    Địa chỉ
+                </th>
+                <th>
+                    Trạng thái
+                </th>
+                <th>
+                    Tên dịch vụ
+                </th>
+                <th>
+                    Ngày đặt
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Hoten)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sdt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Diachi)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Trangthai)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tendichvu)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ngaydat)
+                    </td>
+                    <td>
+                        <a asp-action="" asp-route-id="@item.Iddichvu">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <!--Pagination-->
+        <ul class="pagination justify-content-center" style="margin: 10px auto;">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = Model.PageIndex - 1 })">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <li class="page-item active"><a href="" class="page-link"> @i</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = i })">@i</a></li>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = Model.PageIndex + 1 })">Next</a></li>
+            }
+        </ul>
+    </table>
+</div>

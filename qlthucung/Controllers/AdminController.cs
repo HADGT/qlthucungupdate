@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using qlthucung.Models;
+using RestSharp;
 
 namespace qlthucung.Controllers
 {
@@ -38,23 +39,29 @@ namespace qlthucung.Controllers
         }
 
         // GET: Admin
-        
-        public async Task<IActionResult> Index(int? pageNumber, string search)
+
+        public async Task<IActionResult> Index()
         {
 
             //Dashboard
-            ViewBag.TongDoanhThu = ThongKeDoanhThu();
             ViewBag.ThongKeSL = ThongKeSL();
             ViewBag.ThongKeDonHang = ThongKeDonHang();
             ViewBag.ThongKeKH = ThongKeKhachHang();
-
+            ViewBag.TongDoanhThu = _context.ChiTietDonHangs
+                .Where(m => m.Status == 1)
+                .Sum(
+                n => n.Soluong * n.Gia
+            ).Value;
+            return View();
+        }
+        public async Task<IActionResult> ListDanhMuc(int? pageNumber, string searchTerm)
+        {
             const int pageSize = 5;
             var appDbContext = _context.SanPhams.Include(s => s.IdDanhmucNavigation).Include(s => s.IdthuvienNavigation);
-
-            if (search != null)
+            if (searchTerm != null)
             {
-                var lstSP = _context.SanPhams.Where(n => n.Tensp.Contains(search));
-                ViewBag.Search = search;
+                var lstSP = _context.SanPhams.Where(n => n.Tensp.Contains(searchTerm));
+                ViewBag.searchTerm = searchTerm;
                 var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(lstSP, pageNumber ?? 1, pageSize);
                 return View(paginatedProducts);
             }
@@ -65,17 +72,83 @@ namespace qlthucung.Controllers
                 return View(paginatedProducts);
             }
         }
-
-        public decimal ThongKeDoanhThu()
+        public ActionResult ListDanhMucSP(string selectedParentName, string searchTerm, int page = 1)
         {
-            decimal TongDoanhThu = _context.ChiTietDonHangs
-                .Where(m => m.Status == 1)
-                .Sum(
-                n => n.Soluong * n.Gia
-            ).Value;
-            return TongDoanhThu;
+            // Lấy danh sách ParentName không trùng lặp
+            var parentNames = _context.DanhMucs
+                                      .Select(d => d.ParentId)
+                                      .Distinct()
+                                      .ToList();
+
+            // Lọc danh sách con theo ParentName và tìm kiếm
+            var query = _context.DanhMucs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(selectedParentName))
+            {
+                query = query.Where(d => d.ParentId == selectedParentName);
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(d => d.Tendanhmuc.Contains(searchTerm));
+            }
+
+            // Phân trang
+            int pageSize = 10;
+            int totalItems = query.Count();
+            var danhMucs = query
+                            .OrderBy(d => d.ParentId) // Sắp xếp theo ParentName
+                            .Skip((page - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToList();
+
+            var model = new DanhMucViewModel
+            {
+                ParentNames = parentNames,
+                DanhMucs = danhMucs,
+                SelectedParentName = selectedParentName,
+                SearchTerm = searchTerm,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
+            };
+
+            return View(model);
         }
 
+        [HttpGet]
+        public IActionResult ThongKeDoanhThu()
+        {
+            try
+            {
+                var today = DateTime.Today;
+                var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
+                var startOfMonth = new DateTime(today.Year, today.Month, 1);
+
+                // Doanh thu hôm nay
+                decimal revenueToday = (from ctdh in _context.ChiTietDonHangs
+                                        join dh in _context.DonHangs on ctdh.Madon equals dh.Madon
+                                        where ctdh.Status == 1 && dh.Ngaydat >= today && dh.Ngaydat < today.AddDays(1)
+                                        select (decimal?)(ctdh.Soluong * ctdh.Gia)).Sum() ?? 0;
+
+                // Doanh thu tuần này
+                decimal revenueWeek = (from ctdh in _context.ChiTietDonHangs
+                                       join dh in _context.DonHangs on ctdh.Madon equals dh.Madon
+                                       where ctdh.Status == 1 && dh.Ngaydat >= startOfWeek && dh.Ngaydat < today.AddDays(1)
+                                       select (decimal?)(ctdh.Soluong * ctdh.Gia)).Sum() ?? 0;
+
+                // Doanh thu tháng này
+                decimal revenueMonth = (from ctdh in _context.ChiTietDonHangs
+                                        join dh in _context.DonHangs on ctdh.Madon equals dh.Madon
+                                        where ctdh.Status == 1 && dh.Ngaydat >= startOfMonth && dh.Ngaydat < today.AddDays(1)
+                                        select (decimal?)(ctdh.Soluong * ctdh.Gia)).Sum() ?? 0;
+
+                return Json(new { revenueToday, revenueWeek, revenueMonth });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
 
         public decimal ThongKeSL()
         {
@@ -98,7 +171,7 @@ namespace qlthucung.Controllers
             return slkh;
         }
 
-        [Authorize(Roles = "Admin")] 
+        [Authorize(Roles = "Admin")]
         // GET: Admin/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -122,7 +195,7 @@ namespace qlthucung.Controllers
         // GET: Admin/Create
         public IActionResult Create()
         {
-            showDropList(); 
+            showDropList();
             return View();
         }
 
@@ -195,7 +268,7 @@ namespace qlthucung.Controllers
         }
 
         // POST: Admin/Edit/5
-      
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Masp,IdDanhmuc,Idthuvien,Tensp,Hinh,Giaban,Ngaycapnhat,Soluongton,Mota,Giamgia,Giakhuyenmai")] SanPham sanPham, List<IFormFile> files, IFormCollection form)
@@ -306,14 +379,14 @@ namespace qlthucung.Controllers
         public async Task<IActionResult> QLDonHang(int? pageNumber)
         {
             const int pageSize = 5;
-           
+
             var donHang = from dh in _context.DonHangs
                           join kh in _context.KhachHangs on dh.Makh equals kh.Makh
                           select dh;
             var paginatedProducts = await PaginatedList<DonHang>.CreateAsync(donHang, pageNumber ?? 1, pageSize);
             return View(paginatedProducts);
         }
-        
+
         [HttpGet]
         public IActionResult QLChiTietDonHang(int id)
         {
@@ -361,6 +434,92 @@ namespace qlthucung.Controllers
                 return RedirectToAction("QLDonHang");
             }
             return View(danhmuc);
+        }
+
+        public async Task<IActionResult> ListKhachHang(int? pageNumber, string searchTerm)
+        {
+            const int pageSize = 10;
+            var query = _context.KhachHangs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(kh => kh.Tendangnhap.Contains(searchTerm) || kh.Hoten.Contains(searchTerm) || kh.Dienthoai.Contains(searchTerm));
+                ViewBag.SearchTerm = searchTerm;
+            }
+
+            var paginatedCustomers = await PaginatedList<KhachHang>.CreateAsync(query.OrderBy(kh => kh.Makh), pageNumber ?? 1, pageSize);
+            return View(paginatedCustomers);
+        }
+
+        public async Task<IActionResult> Dichvu(int? pageNumber, string searchTerm, DateTime? ngaydat)
+        {
+            const int pageSize = 10;
+            var query = _context.DichVus.AsQueryable();
+
+            // Tìm kiếm theo tên khách hàng hoặc tên dịch vụ
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(kh => kh.Hoten.Contains(searchTerm) || kh.Tendichvu.Contains(searchTerm));
+                ViewBag.SearchTerm = searchTerm;
+            }
+
+            // Tìm kiếm theo ngày đặt
+            if (ngaydat.HasValue)
+            {
+                query = query.Where(kh => kh.Ngaydat == ngaydat.Value.Date);
+                ViewBag.NgayDat = ngaydat.Value.ToString("yyyy-MM-dd"); // Định dạng lại ngày cho View
+            }
+
+            var paginatedCustomers = await PaginatedList<DichVu>.CreateAsync(query.OrderBy(kh => kh.Iddichvu), pageNumber ?? 1, pageSize);
+            return View(paginatedCustomers);
+        }
+
+        public IActionResult Editkh(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var kh = _context.KhachHangs.Find(id);
+            if (kh == null)
+            {
+                return NotFound();
+            }
+
+            return View(kh);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Editkh(string id, [Bind("Makh,Hoten,Tendangnhap,Email,Diachi,Dienthoai,Ngaysinh,Status")] KhachHang khachHang)
+        {
+            if (id != khachHang.Makh)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(khachHang);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.KhachHangs.Any(e => e.Makh == khachHang.Makh))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("ListKhachHang","Admin", 1);
+
         }
 
     }

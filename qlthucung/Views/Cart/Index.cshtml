@@ -6,6 +6,15 @@
 
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/Content/css/style.min.css" />
+<style>
+    .cart__body {
+        width: 90%;
+    }
+
+    .body {
+        width: 90%;
+    }
+</style>
 
 <div class="body fix-width scroll-inner pt-5" style="margin-top: 50px;">
     <table class="table table-striped">
@@ -19,7 +28,7 @@
             <tr>
                 <th>Id</th>
                 <th>Tên sp</th>
-                <th>Hình</th>                                                                                        
+                <th>Hình</th>
                 <th>Đơn giá</th>
                 <th>Số lượng</th>
                 <th>Tổng tiền</th>
@@ -50,12 +59,11 @@
 
     </table>
     <br>
-    
+
 </div>
 
 <div class="cart__body">
-    
-    <form method="POST" asp-controller="Carrt" asp-action="Index" id="getinfo_form">
+    <form method="POST" asp-controller="Cart" asp-action="Index" id="getinfo_form">
         <div class="row pb-5">
             <div class="col-lg-6 cart__items-box text-left">
                 <a class="btn btn-danger" style="color: #fff; background-color: coral; border-color: coral;" asp-controller="SanPham" asp-action="index">Tiếp tục mua sắm</a>
@@ -92,7 +100,7 @@
 
                                         <div class="cart__items-count">
                                             Số lượng
-                                            @item.Quantity
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" class="w-25" disabled>
                                         </div>
 
                                     </div>
@@ -116,35 +124,21 @@
                         </div>
                         <center>
                             <div class="cart__info-form">
-                                @if (ViewBag.info != null)
-                                {
-                                    @foreach (var item in ViewBag.info)
-                                    {
-                                        <input type="text" placeholder="Họ và tên" name="hoten" value="@item.FullName"><br>
-                                        <input type="email" placeholder="Email" name="email" value="@item.Email">
-                                        <input type="text" placeholder="Số điện thoại" name="sdt" value="@item.PhoneNumber">
-                                        <input type="hidden" name="ngaysinh" value="@item.BirthDate">
-                                    }
-
-                                }
-                                else
-                                {
-                                    <input type="text" placeholder="Họ và tên"><br>
-                                    <input type="email" placeholder="Email">
-                                    <input type="text" placeholder="Số điện thoại">
-                                }
-
-
+                                <input type="text" placeholder="Họ và tên" name="FullName" value="@ViewBag.fullName">
+                                <input type="text" placeholder="Số điện thoại" name="Username" value="@ViewBag.username">
+                                <input type="email" placeholder="Email" name="Email" value="@ViewBag.email">
+                                <input type="text" placeholder="Số điện thoại" name="PhoneNumber" value="@ViewBag.phoneNumber">
+                                <input type="hidden" name="BirthDate" value="@ViewBag.birthDate">
                                 <div class="address">
                                     <h6>Tỉnh / Thành Phố</h6>
-                                    <select name="calc_shipping_provinces" required>
+                                    <select name="Tinh" required>
                                         <option value="">Tỉnh/Tp</option>
                                     </select>
                                 </div>
 
                                 <div class="address">
                                     <h6>Quận / Huyện</h6>
-                                    <select name="calc_shipping_district" required>
+                                    <select name="Xa" required>
                                         <option value="">Quận/Huyện</option>
                                     </select>
                                 </div>
@@ -154,25 +148,22 @@
 
                                 <div class="address">
                                     <h6>Số nhà: </h6>
-                                    <input type="text" name="sonha" id="">
+                                    <input type="text" name="SoNha" id="">
                                 </div>
                             </div>
                         </center>
-
                         <br>
                         <br>
-                        <div class="body__mainTitle">
+                        <div class="body__mainTitle phuongthuctt">
                             <h2>PHƯƠNG THỨC THANH TOÁN</h2>
                         </div>
 
                         <div class="phuongthuctt">
-                            <input type="radio" id="op1" name="op1" required="">
-                            <label for="op1">Chuyển khoản</label>
-
+                            <input type="radio" id="vnpay" name="paymentMethod" required value="vnpay">
+                            <label for="vnpay">Thanh toán qua VnPay</label>
                             <br>
-
-                            <input type="radio" id="op2" name="op1">
-                            <label for="op2">Trả tiền khi nhận hàng</label>
+                            <input type="radio" id="cod" name="paymentMethod" required value="cod">
+                            <label for="cod">Trả tiền khi nhận hàng</label>
                         </div>
 
                         <div class="total">
@@ -182,26 +173,21 @@
                             <div class="product__pride-newPride" style="font-size: 25px;">
                                 <span class="Price">
                                     <bdi>
-                                        @if (ViewBag.cart != null)
+                                        @if (ViewBag.total != null)
                                         {
-                                            @string.Format("{0:N0}", @ViewBag.total)
+                                            <b>@string.Format("{0:N0}", ViewBag.total)</b>
                                         }
                                         &nbsp;
                                         <span class="currencySymbol">₫</span>
                                     </bdi>
                                 </span>
                             </div>
-
                         </div>
-
                         <center><button class="buy" name="order" id="order" type="submit">Đặt hàng</button></center>
-
                     </div>
                 </div>
             </div>
-            
         </div>
-        
     </form>
 </div>
 
@@ -209,24 +195,9 @@
 <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/vietblogdao/js/districts.min.js"></script>
 <script>
-    //chuyen khoan vnpay
-    $('#op1').click(function () {
-        $('#order').attr('name', 'ordervnpay');
-        $('#getinfo_form').attr('action', '/shopthucung/index.php?page=vnpay_create_payment');
-
-    });
-
-    //cod
-    $('#op2').click(function () {
-        $('#order').attr('name', 'order');
-        $('#getinfo_form').attr('action', '');
-    });
-</script>
-
-<script>
     //<![CDATA[
     if (address_2 = localStorage.getItem('address_2_saved')) {
-        $('select[name="calc_shipping_district"] option').each(function () {
+        $('select[name="Xa"] option').each(function () {
             if ($(this).text() == address_2) {
                 $(this).attr('selected', '')
             }
@@ -234,19 +205,19 @@
         $('input.billing_address_2').attr('value', address_2)
     }
     if (district = localStorage.getItem('district')) {
-        $('select[name="calc_shipping_district"]').html(district)
-        $('select[name="calc_shipping_district"]').on('change', function () {
+        $('select[name="Xa"]').html(district)
+        $('select[name="Xa"]').on('change', function () {
             var target = $(this).children('option:selected')
             target.attr('selected', '')
-            $('select[name="calc_shipping_district"] option').not(target).removeAttr('selected')
+            $('select[name="Xa"] option').not(target).removeAttr('selected')
             address_2 = target.text()
             $('input.billing_address_2').attr('value', address_2)
-            district = $('select[name="calc_shipping_district"]').html()
+            district = $('select[name="Xa"]').html()
             localStorage.setItem('district', district)
             localStorage.setItem('address_2_saved', address_2)
         })
     }
-    $('select[name="calc_shipping_provinces"]').each(function () {
+    $('select[name="Tinh"]').each(function () {
         var $this = $(this),
             stc = ''
         c.forEach(function (i, e) {
@@ -254,7 +225,7 @@
             stc += '<option value=' + e + '>' + i + '</option>'
             $this.html('<option value="">Tỉnh / Thành phố</option>' + stc)
             if (address_1 = localStorage.getItem('address_1_saved')) {
-                $('select[name="calc_shipping_provinces"] option').each(function () {
+                $('select[name="Tinh"] option').each(function () {
                     if ($(this).text() == address_1) {
                         $(this).attr('selected', '')
                     }
@@ -268,29 +239,29 @@
                 if (r != '') {
                     arr[i].forEach(function (el) {
                         str += '<option value="' + el + '">' + el + '</option>'
-                        $('select[name="calc_shipping_district"]').html('<option value="">Quận / Huyện</option>' + str)
+                        $('select[name="Xa"]').html('<option value="">Quận / Huyện</option>' + str)
                     })
                     var address_1 = $this.children('option:selected').text()
-                    var district = $('select[name="calc_shipping_district"]').html()
+                    var district = $('select[name="Xa"]').html()
                     localStorage.setItem('address_1_saved', address_1)
                     localStorage.setItem('district', district)
-                    $('select[name="calc_shipping_district"]').on('change', function () {
+                    $('select[name="Xa"]').on('change', function () {
                         var target = $(this).children('option:selected')
                         target.attr('selected', '')
-                        $('select[name="calc_shipping_district"] option').not(target).removeAttr('selected')
+                        $('select[name="Xa"] option').not(target).removeAttr('selected')
                         var address_2 = target.text()
                         $('input.billing_address_2').attr('value', address_2)
-                        district = $('select[name="calc_shipping_district"]').html()
+                        district = $('select[name="Xa"]').html()
                         localStorage.setItem('district', district)
                         localStorage.setItem('address_2_saved', address_2)
                     })
                 } else {
-                    $('select[name="calc_shipping_district"]').html('<option value="">Quận / Huyện</option>')
-                    district = $('select[name="calc_shipping_district"]').html()
+                    $('select[name="Xa"]').html('<option value="">Quận / Huyện</option>')
+                    district = $('select[name="Xa"]').html()
                     localStorage.setItem('district', district)
                     localStorage.removeItem('address_1_saved', address_1)
                 }
             })
         })
     })
-//]]></script>  
+</script>  

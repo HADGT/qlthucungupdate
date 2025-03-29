@@ -25,12 +25,12 @@ namespace qlthucung.Models
         [Column("giaohang")]
         [StringLength(255)]
         public string Giaohang { get; set; }
-        [Column("ngaydat", TypeName = "date")]
+        [Column("ngaydat", TypeName = "DateTime")]
         public DateTime? Ngaydat { get; set; }
-        [Column("ngaygiao", TypeName = "date")]
+        [Column("ngaygiao", TypeName = "DateTime")]
         public DateTime? Ngaygiao { get; set; }
         [Column("makh")]
-        public int? Makh { get; set; }
+        public string Makh { get; set; }
 
         [ForeignKey(nameof(Makh))]
         [InverseProperty(nameof(KhachHang.DonHangs))]

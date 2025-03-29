@@ -22,5 +22,6 @@ namespace qlthucung
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }

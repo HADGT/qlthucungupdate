@@ -79,8 +79,7 @@ namespace qlthucung.Migrations.AppDb
                 name: "KhachHang",
                 columns: table => new
                 {
-                    makh = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    makh = table.Column<string>(type: "varchar(MAX)", nullable: false),
                     hoten = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     tendangnhap = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     matkhau = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -150,7 +149,7 @@ namespace qlthucung.Migrations.AppDb
                     trangthai = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     tendichvu = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     ngaydat = table.Column<DateTime>(type: "datetime", nullable: true),
-                    makh = table.Column<int>(type: "int", nullable: true)
+                    makh = table.Column<string>(type: "varchar(MAX)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -173,7 +172,7 @@ namespace qlthucung.Migrations.AppDb
                     giaohang = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ngaydat = table.Column<DateTime>(type: "date", nullable: true),
                     ngaygiao = table.Column<DateTime>(type: "date", nullable: true),
-                    makh = table.Column<int>(type: "int", nullable: true)
+                    makh = table.Column<string>(type: "varchar(MAX)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -197,7 +196,7 @@ namespace qlthucung.Migrations.AppDb
                     Ngaycapnhap = table.Column<DateTime>(type: "datetime", nullable: true),
                     trangthai = table.Column<int>(type: "int", nullable: true, defaultValueSql: "((0))"),
                     id_sp = table.Column<int>(type: "int", nullable: true),
-                    id_kh = table.Column<int>(type: "int", nullable: true)
+                    id_kh = table.Column<string>(type: "varchar(MAX)", nullable: true)
                 },
                 constraints: table =>
                 {

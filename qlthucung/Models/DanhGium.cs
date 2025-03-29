@@ -21,7 +21,7 @@ namespace qlthucung.Models
         [Column("id_sp")]
         public int? IdSp { get; set; }
         [Column("id_kh")]
-        public int? IdKh { get; set; }
+        public string IdKh { get; set; }
 
         [ForeignKey(nameof(IdKh))]
         [InverseProperty(nameof(KhachHang.DanhGia))]

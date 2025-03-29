@@ -21,9 +21,9 @@ namespace qlthucung.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("makh")]
-        public int Makh { get; set; }
+        public string Makh { get; set; }
         [Column("hoten")]
-        [StringLength(50)]
+        [StringLength(255)]
         public string Hoten { get; set; }
         [Column("tendangnhap")]
         [StringLength(20)]
