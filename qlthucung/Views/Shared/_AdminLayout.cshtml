@@ -34,27 +34,6 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </li>
                 <!-- Sidebar user panel (optional) -->
                 <li class="user-panel pb-3 d-flex align-items-center">
                     <div class="info d-flex">
@@ -219,6 +198,15 @@
                             </a>
                         </li>
                         <li>
+                            <a asp-action="Index" asp-controller="RoleAdmin" class="nav-link">
+                                <i class="nav-icon fas fa-search"></i>
+                                <p>
+                                    Quản lý thông tin người dùng
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                        </li>
+                        <li>
                             <a asp-action="Dichvu" asp-controller="Admin" class="nav-link">
                                 <i class="nav-icon fas fa-search"></i>
                                 <p>
@@ -231,31 +219,19 @@
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-search"></i>
                                 <p>
-                                    Quản lý sản phẩm
+                                    Quản lý bán hàng
                                     <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                <a class="nav-link" asp-action="ListDanhMuc" asp-controller="Admin">
+                                    <a class="nav-link" asp-action="ListDanhMuc" asp-controller="Admin">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Quản lý sản phẩm</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                <a class="nav-link" asp-action="ListDanhMucSP" asp-controller="Admin">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý danh mục</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                <a class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý thông tin khách hàng</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a class="nav-link" asp-action="ListDanhMucSP" asp-controller="Admin">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Quản lý danh mục</p>
                                     </a>
@@ -266,34 +242,22 @@
                                         <p>Quản lý đơn hàng</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Admin" asp-action="QLGiaoDich" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Quản lý giao dịch</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
-
-                        <li class="nav-header">Thống kê</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-file"></i>
-                                <p>Doanh thu</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a asp-action="LichDat" asp-controller="Admin" class="nav-link">
                                 <i class="nav-icon far fa-calendar-alt"></i>
                                 <p>
                                     Xem lịch hẹn
                                 </p>
                             </a>
                         </li>
-
-                        <li class="nav-header">PHÂN QUYỀN</li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-circle nav-icon"></i>
-                                <p>Chia quyền</p>
-                            </a>
-                        </li>
-
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -305,7 +269,7 @@
             @RenderBody()
         </div>
 
-        <footer class="content-wrapper">
+        <footer class="">
             <div class="footer__copyright">
                 <center>SHOPPET</center>
             </div>

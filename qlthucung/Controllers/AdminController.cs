@@ -42,7 +42,10 @@ namespace qlthucung.Controllers
 
         public async Task<IActionResult> Index()
         {
-
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             //Dashboard
             ViewBag.ThongKeSL = ThongKeSL();
             ViewBag.ThongKeDonHang = ThongKeDonHang();
@@ -56,12 +59,17 @@ namespace qlthucung.Controllers
         }
         public async Task<IActionResult> ListDanhMuc(int? pageNumber, string searchTerm)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             const int pageSize = 5;
             var appDbContext = _context.SanPhams.Include(s => s.IdDanhmucNavigation).Include(s => s.IdthuvienNavigation);
+            var query = _context.SanPhams.AsQueryable();
             if (searchTerm != null)
             {
-                var lstSP = _context.SanPhams.Where(n => n.Tensp.Contains(searchTerm));
-                ViewBag.searchTerm = searchTerm;
+                var lstSP = query.Where(sp => sp.Tensp.Contains(searchTerm));
+                ViewBag.SearchTerm = searchTerm;
                 var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(lstSP, pageNumber ?? 1, pageSize);
                 return View(paginatedProducts);
             }
@@ -74,6 +82,10 @@ namespace qlthucung.Controllers
         }
         public ActionResult ListDanhMucSP(string selectedParentName, string searchTerm, int page = 1)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             // Lấy danh sách ParentName không trùng lặp
             var parentNames = _context.DanhMucs
                                       .Select(d => d.ParentId)
@@ -118,6 +130,10 @@ namespace qlthucung.Controllers
         [HttpGet]
         public IActionResult ThongKeDoanhThu()
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             try
             {
                 var today = DateTime.Today;
@@ -175,6 +191,10 @@ namespace qlthucung.Controllers
         // GET: Admin/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -195,8 +215,49 @@ namespace qlthucung.Controllers
         // GET: Admin/Create
         public IActionResult Create()
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             showDropList();
             return View();
+        }
+
+        public ActionResult CreateDm(DanhMuc model)
+        {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
+
+            // Lấy tất cả danh mục hiện có để chọn làm danh mục cha theo TÊN
+            ViewBag.ShowDropList = new SelectList(
+                _context.DanhMucs.Where(dm => dm.IdDanhmuc != model.IdDanhmuc),
+                "Tendanhmuc", // VALUE là tên
+                "Tendanhmuc"  // TEXT hiển thị cũng là tên
+            );
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateDanhMucSP(DanhMuc model)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.DanhMucs.Add(model);
+                _context.SaveChanges();
+                return RedirectToAction("ListDanhMucSP", "Admin");
+            }
+
+            // Load lại danh mục cha nếu có lỗi
+            ViewBag.ShowDropList = new SelectList(
+                _context.DanhMucs,
+                "Tendanhmuc", // Dựa vào tên chứ không phải ID
+                "Tendanhmuc"
+            );
+
+            return View(model);
         }
 
         // POST: Admin/Create
@@ -241,7 +302,7 @@ namespace qlthucung.Controllers
 
                 _context.Add(sanPham);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("ListDanhMuc", "Admin");
             }
 
             showDropList();
@@ -251,6 +312,10 @@ namespace qlthucung.Controllers
         // GET: Admin/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -302,7 +367,7 @@ namespace qlthucung.Controllers
                                 filePaths.Add(fileName);
                             }
 
-                            //sanPham.Hinh = "/Conent/uploads/" + form["PathHinh"];
+                            sanPham.Hinh = "/Conent/uploads/" + form["PathHinh"];
                         }
                     }
                     sanPham.Hinh = form["PathHinh"];
@@ -331,7 +396,7 @@ namespace qlthucung.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("ListDanhMuc", "Admin");
             }
             ViewData["IdDanhmuc"] = new SelectList(_context.DanhMucs, "IdDanhmuc", "IdDanhmuc", sanPham.IdDanhmuc);
             ViewData["Idthuvien"] = new SelectList(_context.ThuVienAnhs, "Idthuvien", "Idthuvien", sanPham.Idthuvien);
@@ -341,6 +406,10 @@ namespace qlthucung.Controllers
         // GET: Admin/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -366,7 +435,7 @@ namespace qlthucung.Controllers
             var sanPham = await _context.SanPhams.FindAsync(id);
             _context.SanPhams.Remove(sanPham);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("ListDanhMuc", "Admin");
         }
 
         private bool SanPhamExists(int id)
@@ -378,66 +447,176 @@ namespace qlthucung.Controllers
 
         public async Task<IActionResult> QLDonHang(int? pageNumber)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
+
             const int pageSize = 5;
 
-            var donHang = from dh in _context.DonHangs
-                          join kh in _context.KhachHangs on dh.Makh equals kh.Makh
-                          select dh;
-            var paginatedProducts = await PaginatedList<DonHang>.CreateAsync(donHang, pageNumber ?? 1, pageSize);
-            return View(paginatedProducts);
+            var query = from dh in _context.DonHangs
+                        join kh in _context.KhachHangs
+                            on dh.Makh equals kh.Makh
+                        join gd in _context.MoMoPayments
+                            on dh.Madon equals gd.Madon into gj
+                        from subGd in gj.DefaultIfEmpty() // left join momo
+                        select new DonHangGiaoDichViewModel
+                        {
+                            DonHang = dh,
+                            GiaoDich = subGd,
+                            KhachHang = kh
+                        };
+
+            var paginated = await PaginatedList<DonHangGiaoDichViewModel>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize);
+
+            return View(paginated);
+        }
+        public async Task<IActionResult> QLGiaoDich(int? pageNumber)
+        {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
+            const int pageSize = 5;
+            var query = _context.MoMoPayments
+                .AsNoTracking()
+                .OrderByDescending(p => p.CreatedAt);
+            var paginated = await PaginatedList<MoMoPayment>.CreateAsync(query, pageNumber ?? 1, pageSize);
+            return View(paginated);
+        }
+
+        public async Task<IActionResult> DetailsGD(string id)
+        {
+            if (id == null) return NotFound();
+
+            var payment = await _context.MoMoPayments.FirstOrDefaultAsync(p => p.PaymentId == id);
+            if (payment == null) return NotFound();
+
+            return View(payment);
         }
 
         [HttpGet]
         public IActionResult QLChiTietDonHang(int id)
         {
-            var donhang = _context.DonHangs.First(m => m.Madon == id);
-            return View(donhang);
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
+            var donhang = _context.DonHangs.FirstOrDefault(m => m.Madon == id);
+            if (donhang == null)
+            {
+                return NotFound();
+            }
+            var khachhang = _context.KhachHangs.FirstOrDefault(kh => kh.Makh == donhang.Makh);
+            var giaodich = _context.MoMoPayments.FirstOrDefault(gd => gd.Madon == id);
+            // Join để lấy Chi tiết + thông tin Sản phẩm
+            var chiTietWithSP = (from ct in _context.ChiTietDonHangs
+                                 where ct.Madon == id
+                                 join sp in _context.SanPhams
+                                 on ct.Masp equals sp.Masp
+                                 select new ChiTietDonHangItemViewModel
+                                 {
+                                     ChiTiet = ct,
+                                     SanPham = sp
+                                 }).ToList();
+            var model = new ChiTietDonHangViewModel
+            {
+                DonHang = donhang,
+                KhachHang = khachhang,
+                GiaoDich = giaodich,
+                ChiTietDonHangs = chiTietWithSP
+            };
+
+            ViewBag.TrangThaiGiaoHang = new List<SelectListItem>
+                                        {
+                                            new SelectListItem { Value = "chờ xử lý", Text = "1 - chờ xử lý" },
+                                            new SelectListItem { Value = "đang xử lý", Text = "2 - đang xử lý" },
+                                            new SelectListItem { Value = "đang giao", Text = "3 - đang giao" },
+                                            new SelectListItem { Value = "giao thành công", Text = "4 - giao thành công" },
+                                            new SelectListItem { Value = "hủy", Text = "5 - hủy" }
+                                        };
+            ViewBag.TrangThaiThanhToan = new List<SelectListItem>
+                                        {
+                                            new SelectListItem { Value = "Chưa thanh toán", Text = "1 - Chưa thanh toán" },
+                                            new SelectListItem { Value = "Đã thanh toán", Text = "2 - Đã thanh toán" }
+                                        };
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult QLChiTietDonHang(int id, IFormCollection collection)
+        [ValidateAntiForgeryToken]
+        public IActionResult QLChiTietDonHang(ChiTietDonHangViewModel model)
         {
-            var danhmuc = _context.DonHangs.First(m => m.Madon == id);
-            var E_tendanhmuc = collection["giaohang"];
-            var ngaygiao = string.Format("{0:MM/dd/yyyy}", collection["NgayGiao"]);
-            danhmuc.Madon = id;
-            if (string.IsNullOrEmpty(E_tendanhmuc))
+            var donhang = _context.DonHangs.FirstOrDefault(m => m.Madon == model.DonHang.Madon);
+            var momo = _context.MoMoPayments.FirstOrDefault(m => m.Madon == model.DonHang.Madon);
+            if (donhang == null)
             {
-                TempData["Errnull"] = "Du lieu khong duoc de trong!";
+                return NotFound();
+            }
+            // Tính tổng tiền đơn hàng
+            var chiTietDonHangs = _context.ChiTietDonHangs
+                .Where(ct => ct.Madon == donhang.Madon)
+                .ToList();
+            decimal totalAmount = chiTietDonHangs.Sum(ct => (ct.Gia ?? 0));
+            if (momo == null)
+            {
+                momo = new MoMoPayment
+                {
+                    Madon = model.DonHang.Madon,
+                    Tinnhantrave = "Thanh toan VnPay cho don hang tai Shoppet",
+                    Amount = totalAmount,
+                    Trangthaithanhtoan = model.GiaoDich?.Trangthaithanhtoan ?? "Chưa thanh toán",
+                    Magiaodich = "cod" + model.DonHang.Madon.ToString(),
+                    PaymentId = Guid.NewGuid().ToString()
+                };
+                _context.MoMoPayments.Add(momo); // thêm mới nếu chưa tồn tại
             }
             else
             {
-                danhmuc.Giaohang = E_tendanhmuc;
-                danhmuc.Ngaygiao = DateTime.Parse(ngaygiao);
-                _context.Update(danhmuc);
+                momo.Trangthaithanhtoan = model.GiaoDich?.Trangthaithanhtoan ?? momo.Trangthaithanhtoan;
+                momo.Amount = totalAmount; // Cập nhật lại số tiền nếu muốn
+                _context.MoMoPayments.Update(momo); // cập nhật nếu đã tồn tại
+            }
+            if (!string.IsNullOrEmpty(model.DonHang.Giaohang) || model.DonHang.Ngaygiao != null)
+            {
+                donhang.Giaohang = model.DonHang.Giaohang;
+                donhang.Ngaygiao = model.DonHang.Ngaygiao;
+                _context.Update(donhang);
+                var ctdh = _context.ChiTietDonHangs.Where(m => m.Madon == donhang.Madon).ToList();
+                int status = model.DonHang.Giaohang == "giao thành công" ? 1 : 0;
 
-                if (E_tendanhmuc == "giao thành công")
+                foreach (var item in ctdh)
                 {
-                    var ctdh = _context.ChiTietDonHangs.Where(m => m.Madon == id).ToList();
-                    foreach (var item in ctdh)
-                    {
-                        item.Status = 1;
-                        _context.Update(item);
-                    }
-                }
-                else
-                {
-                    var ctdh = _context.ChiTietDonHangs.Where(m => m.Madon == id).ToList();
-                    foreach (var item in ctdh)
-                    {
-                        item.Status = 0;
-                        _context.Update(item);
-                    }
+                    item.Status = status;
+                    _context.Update(item);
                 }
 
                 _context.SaveChanges();
                 return RedirectToAction("QLDonHang");
             }
-            return View(danhmuc);
+
+            // Load lại dữ liệu nếu không hợp lệ
+            model.KhachHang = _context.KhachHangs.FirstOrDefault(kh => kh.Makh == donhang.Makh);
+            model.GiaoDich = _context.MoMoPayments.FirstOrDefault(gd => gd.Madon == donhang.Madon);
+            model.ChiTietDonHangs = (from ct in _context.ChiTietDonHangs
+                                     where ct.Madon == donhang.Madon
+                                     join sp in _context.SanPhams on ct.Masp equals sp.Masp
+                                     select new ChiTietDonHangItemViewModel
+                                     {
+                                         ChiTiet = ct,
+                                         SanPham = sp
+                                     }).ToList();
+
+            model.DonHang = donhang;
+            return View(model);
         }
 
         public async Task<IActionResult> ListKhachHang(int? pageNumber, string searchTerm)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             const int pageSize = 10;
             var query = _context.KhachHangs.AsQueryable();
 
@@ -453,6 +632,10 @@ namespace qlthucung.Controllers
 
         public async Task<IActionResult> Dichvu(int? pageNumber, string searchTerm, DateTime? ngaydat)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             const int pageSize = 10;
             var query = _context.DichVus.AsQueryable();
 
@@ -476,6 +659,10 @@ namespace qlthucung.Controllers
 
         public IActionResult Editkh(string id)
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
@@ -516,10 +703,36 @@ namespace qlthucung.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("ListKhachHang", "Admin", 1);
             }
-            return RedirectToAction("ListKhachHang","Admin", 1);
+            return RedirectToAction("ListKhachHang", "Admin", 1);
+        }
+        public IActionResult LichDat(int? month, int? year)
+        {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            {
+                return RedirectToAction("SignIn", "Security");
+            }
 
+            int currentMonth = month ?? DateTime.Now.Month;
+            int currentYear = year ?? DateTime.Now.Year;
+
+            var lichDatList = _context.DichVus
+                .Where(d => d.Ngaydat != null && d.Ngaydat.Value.Month == currentMonth && d.Ngaydat.Value.Year == currentYear)
+                .AsEnumerable()
+                .GroupBy(d => d.Ngaydat.Value.Date)
+                .Select(g => new LichDatViewModel
+                {
+                    Ngay = g.Key,
+                    SoLuong = g.Count(),
+                    Dv = g.ToList()
+                })
+                .ToList();
+
+            ViewBag.Month = currentMonth;
+            ViewBag.Year = currentYear;
+
+            return View(lichDatList);
         }
 
     }

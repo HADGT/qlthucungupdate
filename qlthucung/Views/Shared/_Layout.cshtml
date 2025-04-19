@@ -54,7 +54,7 @@
 
                                     <ul class="login_list">
                                         <li><a href="http://localhost:5172/Shared/profile">Thông tin cá nhân</a></li>
-                                        @if (@User.Identity.Name == "Admin")
+                                        @if (User.IsInRole("Admin"))
                                         {
                                             <li><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
                                         }

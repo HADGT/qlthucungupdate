@@ -57,6 +57,16 @@ namespace qlthucung.Controllers
                     };
                     var roleResult = roleManager.CreateAsync(role).Result;
                 }
+                // Tạo role User nếu chưa có
+                if (!roleManager.RoleExistsAsync("User").Result)
+                {
+                    var role = new AppIdentityRole
+                    {
+                        Name = "User",
+                        Description = "Standard user with limited access"
+                    };
+                    var roleResult = roleManager.CreateAsync(role).Result;
+                }
 
                 // Tạo user mới
                 var user = new AppIdentityUser
@@ -70,7 +80,26 @@ namespace qlthucung.Controllers
                 var result = userManager.CreateAsync(user, register.Password).Result;
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                    if (register.UserName.ToLower().Contains("admin"))
+                    {
+                        // Gán quyền Admin nếu username chứa chữ "admin"
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                    else
+                    {
+                        // Gán quyền User mặc định
+                        if (!roleManager.RoleExistsAsync("User").Result)
+                        {
+                            var role = new AppIdentityRole
+                            {
+                                Name = "User",
+                                Description = "Standard user"
+                            };
+                            var roleResult = roleManager.CreateAsync(role).Result;
+                        }
+
+                        userManager.AddToRoleAsync(user, "User").Wait();
+                    }
                     return RedirectToAction("SignIn", "Security");
                 }
                 else
@@ -80,9 +109,11 @@ namespace qlthucung.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
+                    return View(register);
                 }
+                return NotFound();
             }
-            return View(register);
+            return NotFound();
         }
 
 
@@ -94,21 +125,58 @@ namespace qlthucung.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SignIn(SignIn signIn)
+        public async Task<IActionResult> SignInAsync(SignIn signIn)
         {
             if (ModelState.IsValid)
             {
-                var result = signInManager.PasswordSignInAsync(signIn.UserName, signIn.Password, signIn.RememberMe, false).Result;
-
-                if (result.Succeeded)
+                // Tìm user trước để kiểm tra trạng thái khóa
+                var user = await userManager.FindByNameAsync(signIn.UserName);
+                if (user != null)
                 {
-                    HttpContext.Session.SetString("username", signIn.UserName);
-                    return RedirectToAction("Index", "Home");
-                }
+                    // Kiểm tra xem có phải Admin không
+                    var isAdmin = await userManager.IsInRoleAsync(user, "Admin");
+                    // Nếu bị khóa rồi (có thể là vĩnh viễn), không cho đăng nhập nữa
+                    if (await userManager.IsLockedOutAsync(user))
+                    {
+                        TempData["LoginErr"] = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được mở khóa.";
+                        return View(signIn);
+                    }
+                    // Chỉ chuyển hướng nếu KHÔNG phải admin và cần đổi mật khẩu
+                    if (user.ForceChangePassword && !isAdmin)
+                    {
+                        // Lưu userName tạm vào session để xử lý đổi mật khẩu
+                        HttpContext.Session.SetString("usernameToChangePwd", signIn.UserName);
+                        return RedirectToAction("ChangePassword", "RoleAdmin");
+                    }
+                    // Tiến hành đăng nhập, bật lockoutOnFailure để tự tăng số lần sai
+                    var result = await signInManager.PasswordSignInAsync(
+                        signIn.UserName,
+                        signIn.Password,
+                        signIn.RememberMe,
+                        lockoutOnFailure: !isAdmin // Nếu là admin thì không tăng số lần sai
+                    );
 
+                    if (result.Succeeded)
+                    {
+                        HttpContext.Session.SetString("username", signIn.UserName);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else if (result.IsLockedOut && !isAdmin)
+                    {
+                        await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                        TempData["LoginErr"] = "Tài khoản của bạn đã bị khóa vĩnh viễn do đăng nhập sai quá nhiều lần.";
+                    }
+                    else
+                    {
+                        TempData["LoginErr"] = "Tên tài khoản hoặc mật khẩu không chính xác!";
+                    }
+                }
                 else
-                    TempData["LoginErr"] = "Tên tài khoản hoặc mật khẩu không chính xác!";
+                {
+                    TempData["LoginErr"] = "Tài khoản không tồn tại!";
+                }
             }
+
             return View(signIn);
         }
 
@@ -120,7 +188,6 @@ namespace qlthucung.Controllers
             signInManager.SignOutAsync().Wait();
             HttpContext.Session.Remove("username");
             return RedirectToAction("SignIn", "Security");
-
         }
 
         public IActionResult AccessDenied()

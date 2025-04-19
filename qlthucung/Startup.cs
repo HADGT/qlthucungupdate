@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,13 +35,23 @@ namespace qlthucung
                 options.UseSqlServer(Configuration.GetConnectionString("AppDb")));
 
             services.AddIdentity<AppIdentityUser, AppIdentityRole>()
-                .AddEntityFrameworkStores<AppIdentityDbContext>();
+                    .AddRoles<AppIdentityRole>()
+                    .AddEntityFrameworkStores<AppIdentityDbContext>()
+                    .AddDefaultTokenProviders(); 
 
             // Cấu hình xác thực & session
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Security/SignIn";
                 options.AccessDeniedPath = "/Security/AccessDenied";
+            });
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Cấu hình khóa tài khoản (lockout)
+                options.Lockout.MaxFailedAccessAttempts = 5;
+
+                options.Lockout.AllowedForNewUsers = true;
             });
 
             services.AddDistributedMemoryCache();

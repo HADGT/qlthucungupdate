@@ -130,7 +130,11 @@ namespace qlthucung.Controllers
             // 🔹 Kiểm tra trạng thái thanh toán
             bool isSuccess = response.VnPayResponseCode == "00";
             var transactionStatus = isSuccess ? "Thanh toán thành công" : "Thanh toán thất bại";
-            decimal Amount = Convert.ToDecimal(HttpContext.Session.GetString("Amount"));
+            var chiTietDonHanglst = _context.ChiTietDonHangs
+                    .Where(ct => ct.Madon == madon)
+                    .ToList();
+
+            decimal totalAmount = chiTietDonHanglst.Sum(ct => (ct.Gia ?? 0));
             // 🔹 Lưu giao dịch vào bảng MoMoPayments
             var momoPayment = new MoMoPayment
             {
@@ -139,14 +143,14 @@ namespace qlthucung.Controllers
                 Madon = madon,
                 Magiaodich = response.PaymentMethod + madon,
                 Trangthaithanhtoan = isSuccess ? "Đã thanh toán" : "Chưa thanh toán",
-                Amount = Amount
+                Amount = totalAmount
             };
 
             _context.MoMoPayments.Add(momoPayment);
             _context.SaveChanges();
             HttpContext.Session.Remove("cart");
             ViewBag.madon = madon;
-            ViewBag.Trangthai = response.Success ? "Thanh toán thành công" : "Thanh toán thất bại"; ;
+            ViewBag.Trangthai = response.Success ? "Thanh toán thành công" : "Thanh toán thất bại"; 
 
             // 🔹 Nếu thất bại, cập nhật đơn hàng thành "Đã hủy" và hoàn lại kho
             if (!isSuccess)
@@ -166,6 +170,11 @@ namespace qlthucung.Controllers
                 _context.DonHangs.Update(donHang);
                 _context.SaveChanges();
                 HttpContext.Session.Remove("cart");
+                ViewBag.Trangthai = "Thanh toán thất bại";
+            }
+            else
+            {
+                ViewBag.Trangthai = "Thanh toán thành công";
             }
 
             return View(momoPayment);
