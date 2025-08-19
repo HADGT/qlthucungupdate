@@ -159,6 +159,7 @@ namespace qlthucung.Controllers
                     if (result.Succeeded)
                     {
                         HttpContext.Session.SetString("username", signIn.UserName);
+                        HttpContext.Session.SetString("userId", user.Id);
                         return RedirectToAction("Index", "Home");
                     }
                     else if (result.IsLockedOut && !isAdmin)

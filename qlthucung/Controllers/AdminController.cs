@@ -632,29 +632,72 @@ namespace qlthucung.Controllers
 
         public async Task<IActionResult> Dichvu(int? pageNumber, string searchTerm, DateTime? ngaydat)
         {
+            int pageSize = 5;
             if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
             {
                 return RedirectToAction("SignIn", "Security");
             }
-            const int pageSize = 10;
+
             var query = _context.DichVus.AsQueryable();
 
-            // Tìm kiếm theo tên khách hàng hoặc tên dịch vụ
+            // Lấy từ TempData nếu không có trong tham số
+            if (string.IsNullOrEmpty(searchTerm) && TempData["searchTerm"] != null)
+            {
+                searchTerm = TempData["searchTerm"].ToString();
+            }
+
+            if (!ngaydat.HasValue && TempData["ngaydat"] != null)
+            {
+                ngaydat = DateTime.Parse(TempData["ngaydat"].ToString());
+            }
+
+            if (TempData["EditId"] != null)
+            {
+                ViewBag.EditId = Convert.ToInt32(TempData["EditId"]);
+            }
+
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query = query.Where(kh => kh.Hoten.Contains(searchTerm) || kh.Tendichvu.Contains(searchTerm));
                 ViewBag.SearchTerm = searchTerm;
             }
 
-            // Tìm kiếm theo ngày đặt
             if (ngaydat.HasValue)
             {
                 query = query.Where(kh => kh.Ngaydat == ngaydat.Value.Date);
-                ViewBag.NgayDat = ngaydat.Value.ToString("yyyy-MM-dd"); // Định dạng lại ngày cho View
+                ViewBag.NgayDat = ngaydat.Value.ToString("yyyy-MM-dd");
             }
 
-            var paginatedCustomers = await PaginatedList<DichVu>.CreateAsync(query.OrderBy(kh => kh.Iddichvu), pageNumber ?? 1, pageSize);
+            var paginatedCustomers = await PaginatedList<DichVu>.CreateAsync(query.OrderByDescending(kh => kh.Ngaydat), pageNumber ?? 1, pageSize);
             return View(paginatedCustomers);
+        }
+
+        [HttpGet]
+        public IActionResult EditTrangThaiDichvu(int id, string searchTerm, DateTime? ngaydat, int? pageNumber)
+        {
+            TempData["EditId"] = id;
+            TempData["searchTerm"] = searchTerm;
+            TempData["ngaydat"] = ngaydat?.ToString("yyyy-MM-dd");
+            TempData["pageNumber"] = pageNumber;
+
+            return RedirectToAction(nameof(Dichvu));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CapNhatTrangThai(int id, string trangthai)
+        {
+            var dichVu = await _context.DichVus.FindAsync(id);
+            if (dichVu == null)
+            {
+                return NotFound();
+            }
+
+            dichVu.Trangthai = trangthai;
+            _context.Update(dichVu);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Dichvu));
         }
 
         public IActionResult Editkh(string id)

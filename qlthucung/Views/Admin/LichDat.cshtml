@@ -9,7 +9,7 @@
     var firstDayOfMonth = new DateTime(currentYear, currentMonth, 1);
     var startDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
 
-    var dict = Model.ToDictionary(x => x.Ngay.Date, x => x.SoLuong);
+    var dict = Model.ToDictionary(x => x.Ngay.Date, x => x.Dv);
 
     int prevMonth = currentMonth == 1 ? 12 : currentMonth - 1;
     int prevYear = currentMonth == 1 ? currentYear - 1 : currentYear;
@@ -88,13 +88,28 @@
                                     <div>@day</div>
                                     @if (dict.ContainsKey(ngay.Date))
                                     {
-                                        <a class="btn btn-sm btn-success mt-2"
-                                           asp-action="Dichvu"
-                                           asp-controller="Admin"
-                                           asp-route-ngaydat="@ngay.ToString("yyyy-MM-dd")"
-                                           asp-route-pageNumber="1">
-                                            @dict[ngay.Date] đặt
-                                        </a>
+                                        var listDv = dict[ngay.Date];
+                                        var groupedByStatus = listDv.GroupBy(dv => dv.Trangthai);
+
+                                        foreach (var group in groupedByStatus)
+                                        {
+                                            string btnClass = group.Key switch
+                                            {
+                                                "Hoàn thành" => "btn btn-sm btn-success mb-1",
+                                                "Đang xử lý" => "btn btn-sm btn-warning text-dark mb-1",
+                                                "Chờ xử lý" => "btn btn-sm btn-secondary border border-dark mb-1",
+                                                "Đã hủy" => "btn btn-sm btn-danger mb-1",
+                                                _ => "btn btn-sm btn-light mb-1"
+                                            };
+
+                                            <a class="@btnClass"
+                                               asp-action="Dichvu"
+                                               asp-controller="Admin"
+                                               asp-route-ngaydat="@ngay.ToString("yyyy-MM-dd")"
+                                               asp-route-pageNumber="1">
+                                                @group.Count() @group.Key
+                                            </a>
+                                        }
                                     }
                                 </td>
                                 day++;

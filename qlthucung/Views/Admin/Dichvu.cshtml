@@ -7,7 +7,7 @@
 
 <div class="body fix-width scroll-inner pl-2 pr-2">
     <!-- Form tìm kiếm -->
-    <form asp-action="Dichvu" method="get">
+    <form asp-action="Dichvu" method="get" class="pb-5">
         <div class="form-group">
             <label for="searchTerm">Tìm kiếm:</label>
             <input type="text" name="searchTerm" class="form-control" value="@ViewBag.SearchTerm" placeholder="Nhập tên khách hàng hoặc dịch vụ..." />
@@ -64,7 +64,24 @@
                         @Html.DisplayFor(modelItem => item.Diachi)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Trangthai)
+                        @if (ViewBag.EditId != null && ViewBag.EditId == item.Iddichvu)
+                        {
+                            <form asp-action="CapNhatTrangThai" asp-controller="Admin" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Iddichvu" />
+                                <select name="trangthai" class="form-control form-control-sm">
+                                    <option value="Chờ xử lý" selected="@("Chờ xử lý" == item.Trangthai)">Chờ xử lý</option>
+                                    <option value="Đang xử lý" selected="@("Đang xử lý" == item.Trangthai)">Đang xử lý</option>
+                                    <option value="Hoàn thành" selected="@("Hoàn thành" == item.Trangthai)">Hoàn thành</option>
+                                    <option value="Đã hủy" selected="@("Đã hủy" == item.Trangthai)">Đã hủy</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-success mt-1">Lưu</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Trangthai)
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Tendichvu)
@@ -72,36 +89,51 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Ngaydat)
                     </td>
-                    <td>
-                        <a asp-action="" asp-route-id="@item.Iddichvu">Edit</a>
-                    </td>
+                    @if (item.Trangthai != "Đã hủy" && item.Trangthai != "Hoàn thành")
+                    {
+                        <td>
+                            <a asp-action="EditTrangThaiDichvu" asp-controller="Admin" asp-route-id="@item.Iddichvu" class="btn btn-sm btn-warning">Edit</a>
+                        </td>
+                    }
+
                 </tr>
             }
         </tbody>
-
-        <!--Pagination-->
-        <ul class="pagination justify-content-center" style="margin: 10px auto;">
-            @if (Model.HasPreviousPage)
-            {
-                <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = Model.PageIndex - 1 })">Previous</a></li>
-            }
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                if (i == Model.PageIndex)
-                {
-                    <li class="page-item active"><a href="" class="page-link"> @i</a></li>
-                }
-                else
-                {
-                    <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = i })">@i</a></li>
-                }
-            }
-
-            @if (Model.HasNextPage)
-            {
-                <li class="page-item"><a class="page-link" href="@Url.Action("ListKhachHang", new { pageNumber = Model.PageIndex + 1 })">Next</a></li>
-            }
-        </ul>
     </table>
+    <!--Pagination-->
+    <ul class="pagination justify-content-center" style="margin: 10px auto;">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Dichvu", new { pageNumber = Model.PageIndex - 1, searchTerm = ViewBag.SearchTerm, ngaydat = ViewBag.NgayDat })">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.PageIndex)
+            {
+                <li class="page-item active">
+                    <span class="page-link">@i</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Dichvu", new { pageNumber = i, searchTerm = ViewBag.SearchTerm, ngaydat = ViewBag.NgayDat })">@i</a>
+                </li>
+            }
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Dichvu", new { pageNumber = Model.PageIndex + 1, searchTerm = ViewBag.SearchTerm, ngaydat = ViewBag.NgayDat })">Next</a>
+            </li>
+        }
+    </ul>
 </div>
+
+
+
+

@@ -227,25 +227,25 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="ListDanhMuc" asp-controller="Admin">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý sản phẩm</p>
+                                        <p> Quản lý sản phẩm</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="ListDanhMucSP" asp-controller="Admin">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý danh mục</p>
+                                        <p> Quản lý danh mục</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Admin" asp-action="QLDonHang" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý đơn hàng</p>
+                                        <p> Quản lý đơn hàng</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Admin" asp-action="QLGiaoDich" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Quản lý giao dịch</p>
+                                        <p> Quản lý giao dịch</p>
                                     </a>
                                 </li>
                             </ul>
@@ -255,6 +255,14 @@
                                 <i class="nav-icon far fa-calendar-alt"></i>
                                 <p>
                                     Xem lịch hẹn
+                                </p>
+                            </a>
+                        </li
+                        <li class="nav-item">
+                            <a asp-action="Index" asp-controller="AdminChat" class="nav-link">
+                                <i> 💬 </i>
+                                <p>
+                                    Chat box
                                 </p>
                             </a>
                         </li>
@@ -268,12 +276,6 @@
         <div class="content-wrapper">
             @RenderBody()
         </div>
-
-        <footer class="">
-            <div class="footer__copyright">
-                <center>SHOPPET</center>
-            </div>
-        </footer>
 
         <aside class="control-sidebar control-sidebar-dark">
             <!-- Control sidebar content goes here -->

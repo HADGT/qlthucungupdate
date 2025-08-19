@@ -1,9 +1,11 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = Context.Session.GetString("userId");
+    var userName = Context.Session.GetString("username");
 }
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <div class="head">
     <div class="justify-content-center text-center" style="line-height: 1.25em;">
         <img src="~/Content/images/background.webp" alt="#" style="width: 100%;" />
@@ -27,18 +29,18 @@
                     <img style="border-radius: 20px; justify-content:center" decoding="async" fetchpriority="high" width="100%" src="~/Content/images/Gioithieu.jpg" class="attachment-large size-large wp-image-264 lazyloaded" alt="#" data-ll-status="loaded">
                 </div>
             </div>
-        </div>
+        </div>@*
         <div class="elementor-element elementor-element-1bcfc3d elementor-align-left elementor-hidden-mobile elementor-widget elementor-widget-button w-100" data-id="1bcfc3d" data-element_type="widget" data-widget_type="button.default" style=" padding-block: 30px;">
-            <div class="elementor-widget-container" style="padding: 0 0 0 15px;">
-                <div class="elementor-button-wrapper">
-                    <a class="elementor-button elementor-button-link elementor-size-sm elementor-animation-grow" href="">
-                        <span class="elementor-button-content-wrapper">
-                            <span class="elementor-button-text">Chi tiết</span>
-                        </span>
-                    </a>
-                </div>
-            </div>
+        <div class="elementor-widget-container" style="padding: 0 0 0 15px;">
+        <div class="elementor-button-wrapper">
+        <a class="elementor-button elementor-button-link elementor-size-sm elementor-animation-grow" href="">
+        <span class="elementor-button-content-wrapper">
+        <span class="elementor-button-text">Chi tiết</span>
+        </span>
+        </a>
         </div>
+        </div>
+        </div> *@
     </div>
 </section>
 
@@ -189,7 +191,7 @@
 </section>
 
 <!-- Contact-->
-<section class="contact-section bg-black w-100" id="Lienhe">
+<section class="contact-section bg-black w-100" id="Lienhe" style="padding-bottom: 3rem !important;">
     <div class="container">
         <div class="row gx-4 gx-lg-5 d-flex">
             <div class="col-md-4 mb-md-0">
@@ -198,7 +200,7 @@
                         <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/address--v1.png" alt="address--v1" />
                         <h4 class="text-uppercase m-0 pt-1">Address</h4>
                         <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">4923 Market Street, Orlando FL</div>
+                        <div class="small text-black-50">235 Hoàng Quốc Việt, Phường Cổ Nhuế 1, Quận Bắc Từ Liêm, Hà Nội</div>
                     </div>
                 </div>
             </div>
@@ -208,7 +210,9 @@
                         <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/secured-letter--v1.png" alt="secured-letter--v1" />
                         <h4 class="text-uppercase m-0 pt-1">Email</h4>
                         <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50"><a href="#!">shoppet@yourdomain.com</a></div>
+                        <div class="small text-black-50">
+                            <a href="javascript:void(0);" onclick="copyEmail()" id="email-link">duongha782003@gmail.com</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,11 +222,29 @@
                         <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/iphone.png" alt="iphone" />
                         <h4 class="text-uppercase m-0 pt-1">Phone</h4>
                         <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">+1 (555) 902-8832</div>
+                        <div class="small text-black-50">0986818496</div>
                     </div>
                 </div>
             </div>
         </div>
+        <section class="map-section py-2 pt-5">
+            <div class="container pt-5">
+                <h2 class="text-center mb-3 text-white">
+                    Địa chỉ cửa hàng</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            @* <div class="map" id="mapCanvas" style="height: 400px; width: 100%;"></div> *@
+                            <div id="map" style="height: 400px; z-index: 0;"></div>
+                        </div>
+                    </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=235+Hoàng+Quốc+Việt,+Phường+Cổ+Nhuế+1,+Bắc+Từ+Liêm,+Hà+Nội"
+                   target="_blank" class="btn btn-outline-danger text-white">
+                    📍 Xem đường đi trên Google Maps
+                </a>
+            </div>
+        </section>
         <div class="social d-flex justify-content-center mt-5">
             <a class="mx-5" href="#!"><i class="fab fa-twitter icon-col" style="font-size: 24px"></i></a>
             <a class="mx-5" href="#!"><i class="fab fa-facebook-f icon-col" style="font-size: 24px"></i></a>
@@ -230,3 +252,52 @@
         </div>
     </div>
 </section>
+
+<script>
+    function copyEmail() {
+        const email = "duongha782003@gmail.com";
+        navigator.clipboard.writeText(email).then(() => {
+            alert("Đã sao chép địa chỉ email vào clipboard!");
+        }).catch(err => {
+            console.error("Lỗi khi sao chép email: ", err);
+        });
+    }
+</script>
+@* <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8zXW7wQrE2T8ykSck89ffTkNF69BlvKU&callback=initMap&loading=async" async defer>
+</script>
+<script>
+    // This example displays a marker at the center of Australia.
+    // When the user clicks the marker, an info window opens.
+    //21.046638, 105.784911
+    function initMap() {
+        const uluru = { lat: 21.046638, lng: 105.784911 };
+        const map = new google.maps.Map(document.getElementById("mapCanvas"), {
+            zoom: 20,
+            center: uluru,
+        });
+        const contentString = '235 Hoàng Quốc Việt, Cổ Nhuế 1, Bắc Từ Liêm, Hà Nội';
+        const infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+        const marker = new google.maps.Marker({
+            position: uluru,
+            map,
+            title: 'ShopPet - 235 Hoàng Quốc Việt',
+        });
+
+        marker.addListener("click", () => {
+            infowindow.open({
+                anchor: marker,
+                map,
+            });
+        });
+    }
+</script> *@
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([21.046638, 105.784911], 18);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.marker([21.046638, 105.784911]).addTo(map)
+        .bindPopup('ShopPet - 235 Hoàng Quốc Việt')
+        .openPopup();
+</script>

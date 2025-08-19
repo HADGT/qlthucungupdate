@@ -39,7 +39,10 @@ namespace qlthucung.Controllers
             }
 
             string username = HttpContext.Session.GetString("username");
-
+            if (username == null)
+            {
+                return RedirectToAction("SignIn", "Security"); // Chuyển hướng đến trang đăng nhập
+            }
             var user = _context.AspNetUsers
                    .Where(p => p.UserName == username)
                    .FirstOrDefault(); // Lấy 1 user thay vì List

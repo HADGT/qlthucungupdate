@@ -68,6 +68,10 @@ namespace qlthucung.Controllers
         {
             string ngayDatStr = HttpContext.Session.GetString("NgayDat");
             string username = HttpContext.Session.GetString("username");
+            if (username == null)
+            {
+                return RedirectToAction("SignIn", "Security"); // Chuyển hướng đến trang đăng nhập
+            }
             var user = _context.KhachHangs
                    .Where(p => p.Tendangnhap == username)
                    .Select(p => p.Hoten) // Chỉ lấy FullName

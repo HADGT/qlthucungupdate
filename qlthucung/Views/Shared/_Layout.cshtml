@@ -42,7 +42,10 @@
                         <li class="nav-item"><a class="nav-link pl-1" href="/">Trang chủ</a></li>
                         <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="SanPham">Sản phầm</a></li>
                         <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="DichVu">Dịch vụ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="http://localhost:5172/#Lienhe">Liên hệ</a></li>
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-action="UserIndex" asp-controller="AdminChat">Liên hệ</a></li>
+                        }
                         <li style="display: flex; align-items: center;">
                             <div class="login pl-2" id="loginClick">
                                 @if (User.Identity.IsAuthenticated)
@@ -53,7 +56,7 @@
                                     </span>
 
                                     <ul class="login_list">
-                                        <li><a href="http://localhost:5172/Shared/profile">Thông tin cá nhân</a></li>
+                                        <li><a asp-controller="DichVu" asp-action="UserInfo">Thông tin cá nhân</a></li>
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <li><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
@@ -112,7 +115,7 @@
     <div class="go-to-top"><i class="fas fa-chevron-up"></i></div>
 
     @RenderBody()
-    
+
     <footer class="text-center bg-black text-muted" id="Thongtin">
         <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
             Design by:

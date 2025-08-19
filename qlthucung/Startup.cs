@@ -8,8 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using qlthucung.Models;
 using qlthucung.Security;
+using qlthucung.Services.email;
 using qlthucung.Services.vnpay;
 using System;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Options;
+using qlthucung;
+using Microsoft.AspNetCore.SignalR;
+using qlthucung.Services.chat;
 
 namespace qlthucung
 {
@@ -24,7 +30,7 @@ namespace qlthucung
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Cấu hình dịch vụ Momo
+            // Cấu hình dịch vụ VnPay
             services.AddScoped<IVnPayService, VnPayService>();
 
             // Kết nối database
@@ -37,7 +43,16 @@ namespace qlthucung
             services.AddIdentity<AppIdentityUser, AppIdentityRole>()
                     .AddRoles<AppIdentityRole>()
                     .AddEntityFrameworkStores<AppIdentityDbContext>()
-                    .AddDefaultTokenProviders(); 
+                    .AddDefaultTokenProviders();
+
+            //email
+            services.AddControllersWithViews();
+
+            // Bind cấu hình appsettings.json vào SmtpSettings
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
+
+            // Đăng ký EmailSender, DI sẽ inject IOptions<SmtpSettings> tự động
+            services.AddTransient<IEmailSender, EmailSender>();
 
             // Cấu hình xác thực & session
             services.ConfigureApplicationCookie(options =>
@@ -57,7 +72,11 @@ namespace qlthucung
             services.AddDistributedMemoryCache();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession();
+            services.AddHttpContextAccessor();
             services.AddControllersWithViews();
+            services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            services.AddScoped<IChatService, ChatService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -85,6 +104,8 @@ namespace qlthucung
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                // Map SignalR
+                endpoints.MapHub<ChatHub>("/ChatHub");
             });
         }
     }

@@ -28,6 +28,7 @@ namespace qlthucung.Models
         public virtual DbSet<ThuVienAnh> ThuVienAnhs { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<MoMoPayment> MoMoPayments { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
