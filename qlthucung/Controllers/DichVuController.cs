@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,8 @@ namespace qlthucung.Controllers
             _emailSender = emailSender;
             _userManager = userManager;
         }
+
+        [Authorize(Roles = "User")]
         public IActionResult Index()
         {
             string khachHangName = HttpContext.Session.GetString("username");
@@ -37,6 +40,7 @@ namespace qlthucung.Controllers
             return View();
         }
 
+        [Authorize(Roles = "User")]
         public IActionResult Datlich()
         {
             return View();

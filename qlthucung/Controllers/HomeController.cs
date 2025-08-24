@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using qlthucung.Models;
@@ -17,6 +18,8 @@ namespace qlthucung.Controllers
             this.userManager = userManager;
             _context = context;
         }
+
+        [Authorize(Roles = "User")]
         public IActionResult Index()
         {
             return View();

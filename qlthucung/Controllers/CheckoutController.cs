@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -33,6 +34,8 @@ namespace qlthucung.Controllers
             _vnPayService = vnPayService;
             _logger = logger;
         }
+
+        [Authorize(Roles = "User")]
         public IActionResult Payment()
         {
             string orderJson = HttpContext.Session.GetString("Ordermodel");

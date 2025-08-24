@@ -8,6 +8,7 @@ using qlthucung.Services.chat;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace qlthucung.Controllers
 {
@@ -25,11 +26,14 @@ namespace qlthucung.Controllers
             _chatService = chatService;
             _roleManager = roleManager;
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Authorize(Roles = "User")]
         public IActionResult UserIndex()
         {
             return View();

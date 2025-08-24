@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace qlthucung.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "User")]
         // GET: All SanPham
         public async Task<IActionResult> Index(int Id)
         {
@@ -116,6 +118,7 @@ namespace qlthucung.Controllers
         }
         #endregion
 
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -157,6 +160,7 @@ namespace qlthucung.Controllers
 
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<IActionResult> Search(string search)
         {

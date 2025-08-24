@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,6 +23,8 @@ namespace qlthucung.Controllers
 
 
         // GET: DonHangs/Details/5
+
+        [Authorize(Roles = "User")]
         public IActionResult Details()
         {
             var donHang = (from dh in _context.DonHangs

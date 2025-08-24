@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -28,6 +29,7 @@ namespace qlthucung.Controllers
             _emailSender = emailSender;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(int? pageNumber, string searchTerm)
         {
             int pageSize = 5;

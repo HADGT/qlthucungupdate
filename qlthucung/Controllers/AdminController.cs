@@ -40,6 +40,7 @@ namespace qlthucung.Controllers
 
         // GET: Admin
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))

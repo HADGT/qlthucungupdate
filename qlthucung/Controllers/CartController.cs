@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -23,6 +24,7 @@ namespace qlthucung.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult Index()
         {
@@ -150,6 +152,8 @@ namespace qlthucung.Controllers
             }
             return RedirectToAction("DatHangThanhCong");
         }
+
+        [Authorize(Roles = "User")]
         public IActionResult DatHangThanhCong()
         {
             return View();
