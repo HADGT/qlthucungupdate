@@ -24,9 +24,10 @@ namespace qlthucung.Models
         public string Tendanhmuc { get; set; }
         [Column("ParentID")]
         [StringLength(100)]
-        public string ParentId { get; set; }
+        public string ParentID { get; set; }
 
         [InverseProperty(nameof(SanPham.IdDanhmucNavigation))]
         public virtual ICollection<SanPham> SanPhams { get; set; }
+
     }
 }

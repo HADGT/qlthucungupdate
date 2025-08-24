@@ -1,10 +1,41 @@
-﻿@model IEnumerable<qlthucung.Models.SanPham>
+﻿@model qlthucung.Models.HomeVm
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/Content/css/style.min.css" />
+<style>
+    .product {
+        position: relative;
+        transition: transform 0.3s ease;
+        background: #fff;
+    }
+
+        .product:hover {
+            transform: translateY(-5px);
+        }
+
+    .product__img img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .product__title {
+        font-size: 14px;
+        min-height: 40px;
+    }
+
+    .product__pride-oldPride {
+        font-size: 13px;
+    }
+
+    .product__pride-newPride {
+        font-size: 15px;
+    }
+
+</style>
 <div class="post-slider">
 
     <div class="post-wrapper">
@@ -25,14 +56,14 @@
 <div class="body pt-5 pb-4">
 
     <div class="body__mainTitle">
-        <h2 class="mb-0 pb-0 pt-5">Sản phẩm nổi bật</h2>
+        <h2 class="mb-0 pb-0 pt-5 pb-5">Sản phẩm nổi bật</h2>
     </div>
 
     <div class="post-slider2">
 
         <div class="row mt-0 pt-0">
             <div class="post-wrapper2 mt-0 pt-0">
-                @foreach (var item in ViewBag.getSPNoiBat)
+                @foreach (var item in Model.SanPhamNoiBat)
                 {
                     <div class="col-md-4 col-6 post2">
                         <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
@@ -95,7 +126,7 @@
 </div>
 
 <div class="banner pt-5 pb-4">
-    <div class="body__mainTitle">
+    <div class="body__mainTitle pb-5">
         <h2>Dịch vụ của chúng tôi</h2>
     </div>
 
@@ -129,13 +160,13 @@
 
 <!-- Tất cả sản phẩm -->
 <div class="body p-1 pt-5 pb-4">
-    <div class="body__mainTitle" style="display: flex; justify-content: space-between;">
+    <div class="body__mainTitle pb-5" style="display: flex; justify-content: space-between;">
         <h2>TẤT CẢ SẢN PHẨM</h2>
     </div>
 
     <div>
         <div class="row">
-            @foreach (var item in Model)
+            @foreach (var item in Model.AllProducts)
             {
                 <div class="col-lg-3 col-md-4 col-6 mb-3">
                     <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
@@ -202,399 +233,67 @@
 
 </div>
 <!-- End Tất cả sản phẩm -->
-<!-- Sản phẩm cho chó -->
+
 <div class="body p-1 pt-5 pb-4">
-
-    <div class="row body__mainTitle d-flex align-items-center">
-        <h2 class="col-md-6 text-left">Sản phẩm dành cho chó</h2>
-        <div class="col-md-6 d-flex justify-content-end align-items-center text-right" style="font-size: 26px;">
-            <div id="fordog" class="text-secondary activeColor mr-3">Đồ ăn</div>
-            <div id="fordog2" class="text-secondary mr-3">Phụ kiện</div>
-            <div id="fordog3" class="text-secondary">Vật dụng</div>
-        </div>
+    <div class="body__mainTitle pb-5" style="display: flex; justify-content: space-between;">
+        <h2>SẢN PHẨM CỦA CHÚNG TÔI</h2>
     </div>
 
-    <div class="dogfood active">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoCho3)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
+    <ul class="nav nav-pills justify-content-center mb-4" id="productTabsLevel1">
+        @foreach (var cat in Model.RootCategoriesl1)
+        {
+            <li class="nav-item">
+                <button class="nav-link" data-id="@cat.Id">@cat.Ten</button>
+            </li>
+        }
+    </ul>
 
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
+    <!-- Level 2 sẽ được render bằng JS -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="productTabsLevel2"></ul>
 
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
+    <div class="tab-content" id="productTabContent">
+      @*   @for (int i = 0; i < Model.RootCategoriesl2.Count; i++)
+        {
+            var cat = Model.RootCategoriesl2[i];
+            <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="tab-@cat.Id">
+                <div class="row">
+                    @if (Model.ProductsByRoot.ContainsKey(cat.Id))
+                    {
+                        foreach (var sp in Model.ProductsByRoot[cat.Id])
+                        {
+                            <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.Masp">
+                                    <div class="product shadow-sm rounded-3 h-100">
+                                        <div class="product__img">
+                                            <img src="@sp.Hinh" alt="@sp.Tensp" class="img-fluid rounded-top" />
+                                        </div>
+                                        <div class="product__sale badge bg-danger position-absolute m-2">
+                                            @(sp.Giamgia > 0 ? sp.Giamgia + "%" : "Mới")
+                                        </div>
+                                        <div class="product__content p-2">
+                                            <div class="product__title fw-bold text-truncate">
+                                                @sp.Tensp
+                                            </div>
+
+                                            @if (sp.Giamgia > 0)
+                                            {
+                                                <div class="product__pride-oldPride text-muted">
+                                                    <small><s>@string.Format("{0:N0}", sp.Giaban) ₫</s></small>
+                                                </div>
+                                            }
+                                            <div class="product__pride-newPride text-danger fw-bold">
+                                                @string.Format("{0:N0}", sp.Giakhuyenmai) ₫
+                                            </div>
+                                        </div>
                                     </div>
-                                }
-
+                                </a>
                             </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
+                        }
+                    }
                 </div>
-
-            }
-
-        </div>
-    </div>
-
-    <div class="dogstyle pt-5 pb-4">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoCho4)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
-
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-            }
-
-        </div>
-    </div>
-
-    <div class="dogequi pt-5 pb-4">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoCho5)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
-
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-            }
-
-        </div>
-    </div>
-</div>
-
-<div class="banner pt-5 pb-4">
-    <div class="banner-top">
-        <img src="~/Content/images/BG-2.jpg" />
-    </div>
-</div>
-
-<!-- Sản phẩm cho mèo -->
-<div class="body p-1 pt-5 pb-4">
-
-    <div class="row body__mainTitle d-flex align-items-center">
-        <h2 class="col-md-6 text-left">Sản phẩm dành cho mèo</h2>
-        <div class="col-md-6 d-flex justify-content-end align-items-center text-right" style="font-size: 26px;">
-            <div id="forcat" class="text-secondary activeColor mr-3">Đồ ăn</div>
-            <div id="forcat2" class="text-secondary mr-3">Phụ kiện</div>
-            <div id="forcat3" class="text-secondary">Vật dụng</div>
-        </div>
-    </div>
-
-    <div class="catfood active">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoMeo6)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
-
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            }
-
-        </div>
-    </div>
-
-    <div class="catstyle">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoMeo7)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
-
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            }
-
-        </div>
-    </div>
-
-    <div class="catequi">
-        <div class="row">
-            @foreach (var item in ViewBag.getSPChoMeo8)
-            {
-                <div class="col-lg-2_5 col-md-4 col-6 post2">
-                    <a asp-controller="SanPham" asp-action="Details" asp-route-id="@item.Masp">
-                        <div class="product">
-                            <div class="product__img">
-                                <img src="@item.Hinh" alt="">
-                            </div>
-                            @if (item.Giamgia == 0 || item.Giamgia == null)
-                            {
-                                <div class="product__sale">
-                                    <h4>Mới</h4>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="product__sale">
-                                    <h4>@item.Giamgia %</h4>
-                                </div>
-                            }
-                            <div class="product__content">
-                                <div class="product__title">
-                                    @item.Tensp
-                                </div>
-
-                                @if (!(item.Giamgia == 0 || item.Giamgia == null))
-                                {
-                                    <div class="product__pride-oldPride">
-                                        <span class="Price">
-                                            <bdi>
-                                                @string.Format("{0:N0}", item.Giaban)
-                                                <span class="currencySymbol">₫</span>
-                                            </bdi>
-                                        </span>
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product__pride-newPride">
-                                <span class="Price">
-                                    <bdi>
-                                        @string.Format("{0:N0}", item.Giakhuyenmai)
-                                        <span class="currencySymbol">₫</span>
-                                    </bdi>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            }
-
-        </div>
-    </div>
+            </div>
+        }
+    </div> *@
 </div>
 
 <div class="banner pt-5 pb-4">
@@ -605,5 +304,90 @@
         <img class="col-md-4 col-sm-6" src="~/Content/images/bnn.jpg" />
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('#productTabsLevel1 .nav-link').forEach(tab => {
+        tab.addEventListener('click', async e => {
+            e.preventDefault();
+
+            // active cho L1
+            document.querySelectorAll('#productTabsLevel1 .nav-link')
+                .forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const l1Id = tab.getAttribute('data-id');
+
+            // Gọi API lấy L2 + sản phẩm
+            const res = await fetch(`/SanPham/GetLevel2AndProducts?l1Id=${l1Id}`);
+            const data = await res.json();
+
+            // Render menu L2
+            const level2Container = document.getElementById('productTabsLevel2');
+            level2Container.innerHTML = "";
+            data.level2.forEach((cat, idx) => {
+                level2Container.innerHTML += `
+                    <li class="nav-item">
+                        <button class="nav-link ${idx === 0 ? 'active' : ''}" data-id="${cat.id}">
+                            ${cat.ten}
+                        </button>
+                    </li>`;
+            });
+
+            // Render sản phẩm cho từng L2
+            const content = document.getElementById('productTabContent');
+            content.innerHTML = "";
+            Object.entries(data.products).forEach(([catId, products], idx) => {
+                content.innerHTML += `
+                    <div class="tab-pane fade ${idx === 0 ? 'show active' : ''}" id="tab-${catId}">
+                        <div class="row">
+                            ${products.map(sp => `
+                                <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                    <a href="/SanPham/Details/${sp.masp}">
+                                        <div class="product shadow-sm rounded-3 h-100">
+                                            <div class="product__img">
+                                                <img src="${sp.hinh}" alt="${sp.tensp}" class="img-fluid rounded-top" />
+                                            </div>
+                                            <div class="product__sale badge bg-danger position-absolute m-2">
+                                                ${sp.giamgia > 0 ? sp.giamgia + "%" : "Mới"}
+                                            </div>
+                                            <div class="product__content p-2">
+                                                <div class="product__title fw-bold text-truncate">${sp.tensp}</div>
+                                                ${sp.giamgia > 0 ? `
+                                                    <div class="product__pride-oldPride text-muted">
+                                                        <small><s>${sp.giaban.toLocaleString()} ₫</s></small>
+                                                    </div>` : ""}
+                                                <div class="product__pride-newPride text-danger fw-bold">
+                                                    ${sp.giakhuyenmai.toLocaleString()} ₫
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>`;
+            });
+
+            // Active tab L2 click
+            document.querySelectorAll('#productTabsLevel2 .nav-link').forEach(tab2 => {
+                tab2.addEventListener('click', e => {
+                    e.preventDefault();
+                    document.querySelectorAll('#productTabsLevel2 .nav-link')
+                        .forEach(t => t.classList.remove('active'));
+                    tab2.classList.add('active');
+
+                    document.querySelectorAll('#productTabContent .tab-pane')
+                        .forEach(p => p.classList.remove('show', 'active'));
+
+                    const target = document.getElementById("tab-" + tab2.getAttribute('data-id'));
+                    if (target) target.classList.add('show', 'active');
+                });
+            });
+        });
+    });
+
+    // Gọi mặc định lần đầu với thằng đầu tiên của L1
+    document.querySelector('#productTabsLevel1 .nav-link')?.click();
+</script>
 
 

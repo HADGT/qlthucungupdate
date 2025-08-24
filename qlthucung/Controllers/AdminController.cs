@@ -88,7 +88,7 @@ namespace qlthucung.Controllers
             }
             // Lấy danh sách ParentName không trùng lặp
             var parentNames = _context.DanhMucs
-                                      .Select(d => d.ParentId)
+                                      .Select(d => d.ParentID)
                                       .Distinct()
                                       .ToList();
 
@@ -97,7 +97,7 @@ namespace qlthucung.Controllers
 
             if (!string.IsNullOrEmpty(selectedParentName))
             {
-                query = query.Where(d => d.ParentId == selectedParentName);
+                query = query.Where(d => d.ParentID == selectedParentName);
             }
 
             if (!string.IsNullOrEmpty(searchTerm))
@@ -109,7 +109,7 @@ namespace qlthucung.Controllers
             int pageSize = 10;
             int totalItems = query.Count();
             var danhMucs = query
-                            .OrderBy(d => d.ParentId) // Sắp xếp theo ParentName
+                            .OrderBy(d => d.ParentID) // Sắp xếp theo ParentName
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToList();

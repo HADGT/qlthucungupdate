@@ -19,72 +19,100 @@ namespace qlthucung.Controllers
         }
 
         // GET: All SanPham
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int Id)
         {
-            var sanpham = await _context.SanPhams.Take(12).ToListAsync();
+            var model = new HomeVm();
 
-            getSPNoiBat();
-            getSPChoCho3();
-            getSPChoCho4();
-            getSPChoCho5();
+            // Sản phẩm nổi bật
+            model.SanPhamNoiBat = await getSPNoiBat();
 
-            getSPChoMeo6();
-            getSPChoMeo7();
-            getSPChoMeo8();
+            // Sản phẩm chung (12 sản phẩm mới nhất)
+            model.AllProducts = await _context.SanPhams
+                .OrderByDescending(sp => sp.Masp)
+                .Take(12)
+                .ToListAsync();
 
-            return View(sanpham);
+            // Root categories L1
+            model.RootCategoriesl1 = await _context.DanhMucs
+                .Where(dm => dm.ParentID == null)
+                .Select(dm => new CategoryVm { Id = dm.IdDanhmuc, Ten = dm.Tendanhmuc })
+                .ToListAsync();
+
+            // Nếu chưa chọn thì mặc định lấy thằng đầu tiên
+            if (Id == null)
+            {
+                Id = model.RootCategoriesl1.First().Id;
+            }
+
+            // Lấy Level 2 theo Tên L1 đã chọn
+            model.RootCategoriesl2 = await GetMenulev2(Id);
+
+            // Lấy sản phẩm cho từng L2
+            foreach (var cat in model.RootCategoriesl2)
+            {
+                model.ProductsByRoot[cat.Id] = await GetProductsByRootName(cat.Id);
+            }
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// API Ajax: lấy L2 + sản phẩm theo tên L1
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetLevel2AndProducts(int l1Id)
+        {
+            var l2s = await GetMenulev2(l1Id);
+
+            var productsByL2 = new Dictionary<int, List<SanPham>>();
+            foreach (var cat in l2s)
+            {
+                productsByL2[cat.Id] = await GetProductsByRootName(cat.Id);
+            }
+
+            return Json(new { level2 = l2s, products = productsByL2 });
+        }
+
+        /// <summary>
+        /// Lấy menu L2 theo tên L1
+        /// </summary>
+        private async Task<List<CategoryVm>> GetMenulev2(int l1id)
+        {
+            var catName = await _context.DanhMucs
+                .Where(dm => dm.IdDanhmuc == l1id)
+                .Select(dm => dm.Tendanhmuc)
+                .FirstOrDefaultAsync();
+
+            return await _context.DanhMucs
+                .Where(dm => dm.ParentID == catName) // ParentID lưu tên cha
+                .Select(dm => new CategoryVm
+                {
+                    Id = dm.IdDanhmuc,
+                    Ten = dm.Tendanhmuc
+                })
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Lấy sản phẩm theo tên danh mục
+        /// </summary>
+        private async Task<List<SanPham>> GetProductsByRootName(int Id)
+        {
+            // Lấy sản phẩm theo IdDanhmuc
+            return await _context.SanPhams
+                .Where(sp => sp.IdDanhmuc == Id)
+                .ToListAsync();
         }
 
         //cac ham lay ra san pham
         #region
         //lay san pham noi bat
-        private void getSPNoiBat()
+        private async Task<List<SanPham>> getSPNoiBat()
         {
-            var list = (from c in _context.SanPhams select c)
-                .Take(10).ToList();
-            ViewBag.getSPNoiBat = list;
-        }
-        //lay san pham cho chó có danh mục đồ ăn 3
-        private void getSPChoCho3()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 3)
-                .Take(10).ToList();
-            ViewBag.getSPChoCho3 = list;
-        }
-        //lay san pham cho chó có danh mục phụ kiện 4
-        private void getSPChoCho4()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 4)
-                .Take(10).ToList();
-            ViewBag.getSPChoCho4 = list;
-        }
-        //lay san pham cho chó có danh mục vật dụng 5
-        private void getSPChoCho5()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 5)
-                .Take(10).ToList();
-            ViewBag.getSPChoCho5 = list;
-        }
-        //lay san pham cho mèo có danh mục đồ ăn 6
-        private void getSPChoMeo6()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 6)
-                .Take(10).ToList();
-            ViewBag.getSPChoMeo6 = list;
-        }
-        //lay san pham cho mèo có danh mục phụ kiện 7
-        private void getSPChoMeo7()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 7)
-                .Take(10).ToList();
-            ViewBag.getSPChoMeo7 = list;
-        }
-        //lay san pham cho mèo có danh mục vật dụng 8
-        private void getSPChoMeo8()
-        {
-            var list = (from c in _context.SanPhams select c).Where(n => n.IdDanhmuc == 8)
-                .Take(10).ToList();
-            ViewBag.getSPChoMeo8 = list;
+            return await _context.SanPhams
+                .OrderByDescending(sp => sp.Masp)
+                .Take(10)
+                .ToListAsync();
         }
         #endregion
 
@@ -101,8 +129,8 @@ namespace qlthucung.Controllers
             }
 
             //random san pham
-                List<SanPham> products = _context.SanPhams.OrderBy(x => Guid.NewGuid()).Skip(5).Take(5).ToList();
-                ViewBag.getSPRanDom = products;
+            List<SanPham> products = _context.SanPhams.OrderBy(x => Guid.NewGuid()).Skip(5).Take(5).ToList();
+            ViewBag.getSPRanDom = products;
 
             getThuVienAnhList(id);
 
@@ -133,7 +161,7 @@ namespace qlthucung.Controllers
         public async Task<IActionResult> Search(string search)
         {
             var searchProduct = from m in _context.SanPhams
-                         select m;
+                                select m;
 
             if (!String.IsNullOrEmpty(search))
             {
