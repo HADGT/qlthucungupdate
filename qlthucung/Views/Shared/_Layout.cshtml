@@ -48,6 +48,10 @@
                         <li class="nav-item"><a class="nav-link pl-1" href="/">Trang chủ</a></li>
                         <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="SanPham">Sản phầm</a></li>
                         <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="DichVu">Dịch vụ</a></li>
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-action="UserIndex" asp-controller="AdminChat">Liên hệ</a></li>
+                        }
                         <li style="display: flex; align-items: center;">
                             <div class="login pl-2" id="loginClick">
                                 @if (User.Identity.IsAuthenticated)

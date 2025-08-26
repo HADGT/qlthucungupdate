@@ -48,26 +48,30 @@
     }
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/ChatHub?userId=" + adminId)
+        .withUrl("/ChatHub?userId=" + adminId) // adminId vẫn join group riêng
         .build();
 
     connection.on("ReceiveMessage", function (sender, message) {
-        if (sender !== currentUser) return;
-        console.log("Nhận tin nhắn:", sender, message); // Thêm dòng này để test
-        const msgBox = document.getElementById("chatMessages");
-        msgBox.innerHTML += `<div><strong>Khách:</strong> ${message}</div>`;
-        msgBox.scrollTop = msgBox.scrollHeight;
+        if (sender === currentUser) {
+            const msgBox = document.getElementById("chatMessages");
+            msgBox.innerHTML += `<div class="text-start text-secondary"><strong>Khách:</strong> ${message}</div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+        } else {
+            // đánh dấu có tin nhắn mới
+            const li = document.getElementById("user-" + sender);
+            if (li) li.classList.add("fw-bold", "bg-warning");
+        }
     });
 
-    connection.on("NewUserConnected", function (sender, message) {
-        if (sender !== currentUser) return;
-        console.log("Khách hàng mới:", userId);
+    connection.on("NewUserConnected", function (userId) {
         addUserToList(userId);
     });
 
     connection.start().then(() => {
-        console.log("Connected to ChatHub as admin:", adminId);
-    }).catch(err => console.error(err));
+        console.log("Admin connected:", adminId);
+        // Join group ADMIN
+        connection.invoke("SendMessage", adminId, "ADMIN", "Admin online");
+    });
 
     async function loadMessages(userId) {
         const msgBox = document.getElementById("chatMessages");
@@ -100,43 +104,27 @@
         msgBox.scrollTop = msgBox.scrollHeight;
 
         msgInput.value = '';
-        msgInput.style.height = 'auto';
     }
 
+
     function addUserToList(user) {
-        let userId, userName;
+        let userId = typeof user === 'string' ? user : user.id;
+        let userName = typeof user === 'string' ? user : user.userName || user.id;
 
-        if (typeof user === 'string') {
-            userId = user;
-            userName = user; // fallback hiển thị userId
-        } else if (user && user.id) {
-            userId = user.id;            // dùng user.id thay vì user.userId
-            userName = user.userName || user.id;
-        } else {
-            console.warn("User không hợp lệ:", user);
-            return;
-        }
-
-        if (!userId) {
-            console.warn("UserId không hợp lệ:", user);
-            return;
-        }
-
-        if (document.getElementById("user-" + userId)) return;
+        if (!userId || document.getElementById("user-" + userId)) return;
 
         const li = document.createElement("li");
         li.className = "list-group-item";
         li.id = "user-" + userId;
         li.style.cursor = "pointer";
-
-        const shortId = userId.length > 8 ? userId.substring(0, 8) : userId;
-        li.innerText = `${userName} (${shortId})`;
+        li.innerText = userName;
 
         li.onclick = async () => {
             currentUser = userId;
             await loadMessages(userId);
 
-            // Tô màu active
+            // reset highlight khi click
+            li.classList.remove("fw-bold", "bg-warning");
             document.querySelectorAll("#userList li").forEach(el => el.classList.remove("active"));
             li.classList.add("active");
         };

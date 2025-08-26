@@ -102,7 +102,6 @@
     });
 
     connection.on("ReceiveMessage", function (sender, message) {
-        if (!adminId) adminId = sender;
         const msgBox = document.getElementById("chatMessages");
         const safeContent = escapeHtml(message);
         msgBox.innerHTML += `<div class="text-start text-secondary chat-message"><strong>Hỗ trợ:</strong> ${safeContent}</div>`;
@@ -141,6 +140,8 @@
     function sendMessage() {
         const msgInput = document.getElementById("messageInput");
         const msg = msgInput.value.trim();
+        if (!msg) return;
+
         connection.invoke("SendMessage", guestId, adminId, msg).catch(err => console.error(err));
 
         const msgBox = document.getElementById("chatMessages");
@@ -149,9 +150,6 @@
         msgBox.scrollTop = msgBox.scrollHeight;
 
         msgInput.value = '';
-        msgInput.style.height = 'auto';
-        document.getElementById("sendButton").disabled = true;
-        msgInput.focus();
     }
 
     window.onload = function () {
