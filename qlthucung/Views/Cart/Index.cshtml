@@ -40,8 +40,8 @@
                 <tr>
                     <td>@item.Product.Masp</td>
                     <td>@item.Product.Tensp</td>
-                    <td><img src="@item.Product.Hinh" width="60" /> </td>
-                    <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai)</td>
+                        <td><img src="@item.Product.Hinh" width="60" class="rounded" /></td>
+                        <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai) ₫</td>
                     <td>@item.Quantity</td>
                     <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai * item.Quantity)</td>
                     <td><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Masp">Xóa sản phẩm</a></td>
@@ -191,9 +191,7 @@
     </form>
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.6.3.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/vietblogdao/js/districts.min.js"></script>
+@section Scripts {
 <script>
     //<![CDATA[
     if (address_2 = localStorage.getItem('address_2_saved')) {

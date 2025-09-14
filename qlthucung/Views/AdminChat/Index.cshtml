@@ -51,6 +51,7 @@
         .withUrl("/ChatHub?userId=" + adminId) // adminId vẫn join group riêng
         .build();
 
+            const response = await fetch(`/get-messages?userId=${userId}`);
     connection.on("ReceiveMessage", function (sender, message) {
         if (sender === currentUser) {
             const msgBox = document.getElementById("chatMessages");
