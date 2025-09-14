@@ -5,184 +5,69 @@
     var userId = Context.Session.GetString("userId");
     var userName = Context.Session.GetString("username");
 }
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<div class="head">
-    <div class="justify-content-center text-center" style="line-height: 1.25em;">
-        <img src="~/Content/images/background.webp" alt="#" style="width: 100%;" />
+
+<!-- Hero banner -->
+<div class="hero-banner position-relative text-center">
+    <img src="~/Content/images/background.webp" alt="banner" class="w-100" style="max-height:500px; object-fit:cover;">
+    <div class="hero-text position-absolute top-50 start-50 translate-middle bg-opacity-50 p-4 rounded">
+        <h1 class="fw-bold display-4" style="color:#8B5E3C">ShopPet</h1>
+        <p class="lead" style="color:#8B5E3C">Thế giới thông tin & sản phẩm cho thú cưng</p>
     </div>
 </div>
 
-<section class="elementer-container bg-white mt-3 w-100">
-    <div class="container">
-        <div class="row col-md-12 d-flex">
-            <div class="col-md-6">
-                <div class="text-left" style="line-height: 100px;">
-                    <strong style="font-size: 42px; line-height: 60px; padding-bottom:50px;">Shoppet</strong>
-                </div>
-                <div>
-                    <p style="text-align: justify;"><strong class="text-black-50">Shoppet</strong> được xây dựng dựa trên tiêu chí là cổng thông tin khổng lồ và hoàn toàn miễn phí về các vấn đề xung quanh động vật , đặc biệt là thú cưng, cụ thể như các bệnh về chó mèo, các thực phẩm dinh dưỡng dành cho thú cưng, cách chăm sóc và điều trị bệnh cho chó mèo…</p>
-                    <p style="text-align: justify;">Tất cả những thông tin tại Monspet được sưu tầm và tham khảo từ nhiều nguồn khác nhau có chọn lọc, bên cạnh đó còn là trải nghiệm thực tế của chúng tôi trong quá trình nuôi thú cưng để đem đến cho độc giả những thông tin chính xác và hữu ích nhất.</p>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="elementer-container-image text-center">
-                    <img style="border-radius: 20px; justify-content:center" decoding="async" fetchpriority="high" width="100%" src="~/Content/images/Gioithieu.jpg" class="attachment-large size-large wp-image-264 lazyloaded" alt="#" data-ll-status="loaded">
-                </div>
-            </div>
-        </div>@*
-        <div class="elementor-element elementor-element-1bcfc3d elementor-align-left elementor-hidden-mobile elementor-widget elementor-widget-button w-100" data-id="1bcfc3d" data-element_type="widget" data-widget_type="button.default" style=" padding-block: 30px;">
-        <div class="elementor-widget-container" style="padding: 0 0 0 15px;">
-        <div class="elementor-button-wrapper">
-        <a class="elementor-button elementor-button-link elementor-size-sm elementor-animation-grow" href="">
-        <span class="elementor-button-content-wrapper">
-        <span class="elementor-button-text">Chi tiết</span>
-        </span>
-        </a>
+<!-- Giới thiệu -->
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 mb-3">
+            <h2 class="fw-bold text-uppercase mb-4">Về Shoppet</h2>
+            <p class="text-muted">
+                <b class="text-dark" style="color:#8B5E3C">Shoppet</b> được xây dựng dựa trên tiêu chí là cổng thông tin khổng lồ
+                và hoàn toàn miễn phí về các vấn đề xung quanh thú cưng: bệnh lý, dinh dưỡng, cách chăm sóc
+                và điều trị bệnh...
+            </p>
+            <p class="text-muted">
+                Thông tin được chọn lọc từ nhiều nguồn uy tín, kết hợp với trải nghiệm thực tế để mang đến nội dung
+                chính xác và hữu ích nhất.
+            </p>
         </div>
+        <div class="col-md-6 text-center">
+            <img src="~/Content/images/Gioithieu.jpg" class="img-fluid rounded-4 shadow" alt="Giới thiệu">
         </div>
-        </div> *@
     </div>
 </section>
 
-<section class="contact-section w-100 pb-3 pt-0" style="background-color: #F5F5F5; padding-bottom: 0 !important;">
-    <div class="container" style="max-width: 1140px;">
-        <div class="row w-100">
-            <div class="elementor-widget-wrap elementor-element-populated">
-                <div class="elementor-element elementor-element-9bad62a elementor-widget elementor-widget-heading" data-id="9bad62a" data-element_type="widget" data-widget_type="heading.default">
-                    <div class="elementor-widget-container">
-                        <h2 class="elementor-heading-title elementor-size-default text-center">Cam kết</h2>
-                    </div>
-                </div>
-                <div class="elementor-element elementor-element-f82bfca elementor-widget elementor-widget-text-editor" data-id="f82bfca" data-element_type="widget" data-widget_type="text-editor.default">
-                    <div class="elementor-widget-container">
-                        <p style="text-align: justify;">Shoppet được định hình là trang web thông tin hàng đầu về động vật, thú cưng. Chúng tôi cam kết tất cả nội dung cung cấp trên trang đều được trích dịch từ các nguồn web nước ngoài rõ ràng, có ý kiến và trích dẫn thú y. Từ đó mang lại những giải pháp chính xác nhất cho người xem.</p>
-                    </div>
-                </div>
-                <section class="container elementor-section elementor-inner-section elementor-element elementor-element-bc1302a elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="bc1302a" data-element_type="section">
-                    <div class="row w-100 elementor-container elementor-column-gap-wider col-md-12 d-flex">
-                        <div class="elementor-column elementor-col-33 elementor-inner-column elementor-element elementor-element-7cf8841 col-md-4" data-id="7cf8841" data-element_type="column">
-                            <div class="elementor-widget-wrap elementor-element-populated">
-                                <div class="elementor-element elementor-element-fe9e4fb elementor-position-top elementor-widget elementor-widget-image-box" data-id="fe9e4fb" data-element_type="widget" data-widget_type="image-box.default">
-                                    <div class="elementor-widget-container">
-                                        <div class="elementor-image-box-wrapper">
-                                            <figure class="elementor-image-box-img">
-                                                <img decoding="async" width="48" height="48" src="~/Content/images/i1-1.webp" class="attachment-full size-full wp-image-271 lazyloaded" alt="" data-ll-status="loaded">
-                                                <noscript>
-                                                    <img decoding="async" width="48" height="48" src="https://monspet.com/wp-content/uploads/2019/07/i1-1.png" class="attachment-full size-full wp-image-271" alt="" />
-                                                </noscript>
-                                            </figure>
-                                            <div class="elementor-image-box-content">
-                                                <h3 class="elementor-image-box-title">Nội dung</h3>
-                                                <p class="elementor-image-box-description">Nội dung chất lượng, chính xác, có nguồn uy tín, có thú y xem xét.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="elementor-column elementor-col-33 elementor-inner-column elementor-element elementor-element-c7d5e01 col-md-4" data-id="c7d5e01" data-element_type="column">
-                            <div class="elementor-widget-wrap elementor-element-populated">
-                                <div class="elementor-element elementor-element-343a95f elementor-position-top elementor-widget elementor-widget-image-box" data-id="343a95f" data-element_type="widget" data-widget_type="image-box.default">
-                                    <div class="elementor-widget-container">
-                                        <div class="elementor-image-box-wrapper">
-                                            <figure class="elementor-image-box-img">
-                                                <img decoding="async" width="48" height="48" src="~/Content/images/i2-1.webp" class="attachment-full size-full wp-image-272 lazyloaded" alt="" data-ll-status="loaded">
-                                                <noscript>
-                                                    <img decoding="async" width="48" height="48" src="~/Content/images/i2-1.webp" class="attachment-full size-full wp-image-272" alt="" />
-                                                </noscript>
-                                            </figure>
-                                            <div class="elementor-image-box-content">
-                                                <h3 class="elementor-image-box-title">Sản phẩm</h3>
-                                                <p class="elementor-image-box-description">Sản phẩm được gợi ý công bằng, được phân tích review chi tiết chính xác.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="elementor-column elementor-col-33 elementor-inner-column elementor-element elementor-element-66b6e03 col-md-4" data-id="66b6e03" data-element_type="column">
-                            <div class="elementor-widget-wrap elementor-element-populated">
-                                <div class="elementor-element elementor-element-0fed7f8 elementor-position-top elementor-widget elementor-widget-image-box" data-id="0fed7f8" data-element_type="widget" data-widget_type="image-box.default">
-                                    <div class="elementor-widget-container">
-                                        <div class="elementor-image-box-wrapper">
-                                            <figure class="elementor-image-box-img">
-                                                <img decoding="async" width="48" height="48" src="~/Content/images/i3-1.webp" class="attachment-full size-full wp-image-273 lazyloaded" alt="" data-ll-status="loaded">
-                                                <noscript>
-                                                    <img decoding="async" width="48" height="48" src="~/Content/images/i3-1.webp" class="attachment-full size-full wp-image-273" alt="" />
-                                                </noscript>
-                                            </figure>
-                                            <div class="elementor-image-box-content">
-                                                <h3 class="elementor-image-box-title">Hỗ trợ</h3>
-                                                <p class="elementor-image-box-description">Hỗ trợ hết mình, hướng dẫn những nguồn khám bệnh thú cưng uy tín, chất lượng.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-        <div class="row w-100">
-            <div class="elementor-column elementor-col-50 elementor-inner-column elementor-element elementor-element-c7d5e01 col-md-6" data-id="c7d5e01" data-element_type="column">
-                <div class="elementor-widget-wrap elementor-element-populated">
-                    <div class="elementor-element elementor-element-afdce65 elementor-view-default elementor-position-top elementor-mobile-position-top elementor-widget elementor-widget-icon-box" data-id="afdce65" data-element_type="widget" data-widget_type="icon-box.default">
-                        <div class="elementor-widget-container">
-                            <div class="elementor-icon-box-wrapper">
-                                <div class="elementor-icon-box-content">
-                                    <h3 class="elementor-icon-box-title text-center" style="margin-bottom: 15px;">
-                                        <span>
-                                            Sứ mệnh
-                                        </span>
-                                    </h3>
-                                    <div class="elementor-description">
-                                        <p style="margin-left:.25in;text-align:justify">
-                                            <span style="font-size:12.0pt;line-height:107%;">
-                                                Sứ mệnh của chúng tôi là mang đến cho độc giả, những người yêu thương thú cưng những thông tin nhanh chóng và chính xác nhất.
-                                                Nhằm đảm bảo và giảm thiểu những trường hợp vì thiếu thông tin mà gây ra những việc hậu quả đáng tiếc.
-                                            </span>
-                                        </p>
-                                        <p style="margin-left:.25in;text-align:justify">
-                                            <span style="font-size:12.0pt;line-height:107%;">
-                                                <b>Shoppet</b> cam kết mang lại cho độc giả một trải nghiệm tốt nhất trong ngành chăm sóc thú cưng.
-                                                Chúng tôi cũng như các chủ nuôi – hay những người yêu quý động vật, đều dành một tình yêu to lớn cho những người bạn bốn chân.
-                                                Monspet sẽ luôn đồng hành cùng với mọi người để giúp những người bạn bốn chân của chúng ta nhận ra rằng chúng đang được
-                                                yêu thương và quý trọng như thế nào.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<!-- Cam kết -->
+<section class="py-5" style="background:#E6D5C3;">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Cam kết</h2>
+        <h3 class="mb-5">Shoppet cam kết mang lại cho bạn thông tin minh bạch, chính xác và giải pháp tốt nhất.</h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <img src="~/Content/images/i1-1.webp" width="48" height="48" class="mb-3" />
+                        <h5 class="fw-bold">Nội dung</h5>
+                        <p class="text-muted">Chính xác, có nguồn uy tín và được chuyên gia thú y xem xét.</p>
                     </div>
                 </div>
             </div>
-            <div class="elementor-column elementor-col-50 elementor-inner-column elementor-element elementor-element-c7d5e01 col-md-6" data-id="c7d5e01" data-element_type="column">
-                <div class="elementor-widget-wrap elementor-element-populated">
-                    <div class="elementor-element elementor-element-3249f4aa elementor-view-default elementor-position-top elementor-mobile-position-top elementor-widget elementor-widget-icon-box" data-id="3249f4aa" data-element_type="widget" data-widget_type="icon-box.default">
-                        <div class="elementor-widget-container">
-                            <div class="elementor-icon-box-wrapper">
-                                <div class="elementor-icon-box-content">
-                                    <h3 class="elementor-icon-box-title text-center" style="margin-bottom: 15px;">
-                                        <span>
-                                            Tầm nhìn
-                                        </span>
-                                    </h3>
-                                    <div class="elementor-description">
-                                        <p style="margin-left:.25in;text-align:justify">
-                                            <span style="font-size:12.0pt;line-height:107%;">
-                                                Chúng tôi mong muốn <b>Shoppet</b> sẽ trở thành địa chỉ tìm kiếm thông tin đáng tin cậy cho những người quan tâm và yêu thương động vật.
-                                                Và quan trọng hơn, Monspet sẽ là người bạn đồng hành thân cậy với mọi người trong quá trình chăm sóc thú nuôi.
-                                            </span>
-                                            <span style="font-size:12.0pt;line-height:107%;">
-                                                Chúng tôi sẽ không ngừng nỗ lực và phát triển, phủ rộng thông tin đến mọi miền đất nước, đến những nơi cần chúng tôi trong hành trình chăm sóc động vật – thú cưng.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <img src="~/Content/images/i2-1.webp" width="48" height="48" class="mb-3" />
+                        <h5 class="fw-bold">Sản phẩm</h5>
+                        <p class="text-muted">Được phân tích & review công bằng, chi tiết, minh bạch.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <img src="~/Content/images/i3-1.webp" width="48" height="48" class="mb-3" />
+                        <h5 class="fw-bold">Hỗ trợ</h5>
+                        <p class="text-muted">Đồng hành, hướng dẫn nguồn khám thú cưng uy tín, tận tâm.</p>
                     </div>
                 </div>
             </div>
@@ -190,65 +75,89 @@
     </div>
 </section>
 
-<!-- Contact-->
-<section class="contact-section bg-black w-100" id="Lienhe" style="padding-bottom: 3rem !important;">
+<!-- Sứ mệnh & Tầm nhìn -->
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="p-4 border rounded-4 shadow-sm h-100">
+                <h3 class="text-center fw-bold mb-3">Sứ mệnh</h3>
+                <p class="text-muted">
+                    Sứ mệnh của chúng tôi là mang đến cho độc giả thông tin nhanh chóng và chính xác nhất,
+                    giúp giảm thiểu rủi ro do thiếu hiểu biết.
+                </p>
+                <p class="text-muted">
+                    <b style="color:#000">Shoppet</b> cam kết đồng hành cùng những người yêu thú cưng, để các bạn nhỏ bốn chân luôn cảm nhận được tình yêu thương.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-4 border rounded-4 shadow-sm h-100">
+                <h3 class="text-center fw-bold mb-3">Tầm nhìn</h3>
+                <p class="text-muted">
+                    <b style="color:#000">Shoppet</b> hướng tới trở thành địa chỉ thông tin đáng tin cậy và người bạn đồng hành thân cận
+                    trong quá trình chăm sóc thú nuôi.
+                </p>
+                <p class="text-muted">
+                    Chúng tôi sẽ không ngừng nỗ lực, phủ rộng thông tin đến mọi miền đất nước.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Liên hệ -->
+<section class="contact-section text-white py-5" style="background:#8B5E3C;" id="Lienhe">
     <div class="container">
-        <div class="row gx-4 gx-lg-5 d-flex">
-            <div class="col-md-4 mb-md-0">
-                <div class="card py-4 h-100">
-                    <div class="card-body text-center">
-                        <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/address--v1.png" alt="address--v1" />
-                        <h4 class="text-uppercase m-0 pt-1">Address</h4>
-                        <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">235 Hoàng Quốc Việt, Phường Cổ Nhuế 1, Quận Bắc Từ Liêm, Hà Nội</div>
+        <h2 class="text-center fw-bold mb-5">Liên hệ</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-map-marker-alt mb-3" style="color:#8B5E3C; width: 25%;"></i>
+                        <h4>Địa chỉ</h4>
+                        <p class="text-muted">235 Hoàng Quốc Việt, Cổ Nhuế 1, Bắc Từ Liêm, Hà Nội</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-md-0">
-                <div class="card py-4 h-100">
-                    <div class="card-body text-center">
-                        <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/secured-letter--v1.png" alt="secured-letter--v1" />
-                        <h4 class="text-uppercase m-0 pt-1">Email</h4>
-                        <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">
-                            <a href="javascript:void(0);" onclick="copyEmail()" id="email-link">duongha782003@gmail.com</a>
-                        </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-envelope mb-3" style="color:#8B5E3C; width: 25%;"></i>
+                        <h4>Email</h4>
+                        <a href="javascript:void(0);" onclick="copyEmail()" class="text-decoration-none text-dark">
+                            duongha782003@gmail.com
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-md-0">
-                <div class="card py-4 h-100">
-                    <div class="card-body text-center">
-                        <img width="30" height="30" src="https://img.icons8.com/ios/50/ff7f50/iphone.png" alt="iphone" />
-                        <h4 class="text-uppercase m-0 pt-1">Phone</h4>
-                        <hr class="my-4 mx-auto" />
-                        <div class="small text-black-50">0986818496</div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-phone mb-3" style="color:#8B5E3C; width: 25%;"></i>
+                        <h4>Phone</h4>
+                        <p class="text-muted">0986 999 999</p>
                     </div>
                 </div>
             </div>
         </div>
-        <section class="map-section py-2 pt-5">
-            <div class="container pt-5">
-                <h2 class="text-center mb-3 text-white">
-                    Địa chỉ cửa hàng</h4>
-                    <div class="row justify-content-center">
-                        <div class="col-md-10">
-                            @* <div class="map" id="mapCanvas" style="height: 400px; width: 100%;"></div> *@
-                            <div id="map" style="height: 400px; z-index: 0;"></div>
-                        </div>
-                    </div>
-            </div>
+
+        <!-- Map -->
+        <div class="mt-5">
+            <h3 class="text-center mb-3">Địa chỉ cửa hàng</h3>
+            <div id="map" style="height:400px; z-index:0;" class="rounded shadow-sm"></div>
             <div class="text-center mt-3">
-                <a href="https://www.google.com/maps/search/?api=1&query=235+Hoàng+Quốc+Việt,+Phường+Cổ+Nhuế+1,+Bắc+Từ+Liêm,+Hà+Nội"
-                   target="_blank" class="btn btn-outline-danger text-white">
-                    📍 Xem đường đi trên Google Maps
+                <a href="https://www.google.com/maps/search/?api=1&query=235+Hoàng+Quốc+Việt,+Cổ+Nhuế+1,+Bắc+Từ+Liêm,+Hà+Nội"
+                   target="_blank" class="btn btn-outline-light">
+                    📍 Xem trên Google Maps
                 </a>
             </div>
-        </section>
+        </div>
+
+        <!-- Social -->
         <div class="social d-flex justify-content-center mt-5">
-            <a class="mx-5" href="#!"><i class="fab fa-twitter icon-col" style="font-size: 24px"></i></a>
-            <a class="mx-5" href="#!"><i class="fab fa-facebook-f icon-col" style="font-size: 24px"></i></a>
-            <a class="mx-5" href="#!"><i class="fab fa-github icon-col" style="font-size: 24px"></i></a>
+            <a class="mx-3 text-white" href="#"><i class="fab fa-twitter fa-lg"></i></a>
+            <a class="mx-3 text-white" href="#"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a class="mx-3 text-white" href="#"><i class="fab fa-github fa-lg"></i></a>
         </div>
     </div>
 </section>
@@ -257,42 +166,10 @@
     function copyEmail() {
         const email = "duongha782003@gmail.com";
         navigator.clipboard.writeText(email).then(() => {
-            alert("Đã sao chép địa chỉ email vào clipboard!");
-        }).catch(err => {
-            console.error("Lỗi khi sao chép email: ", err);
+            alert("Đã sao chép email!");
         });
     }
 </script>
-@* <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8zXW7wQrE2T8ykSck89ffTkNF69BlvKU&callback=initMap&loading=async" async defer>
-</script>
-<script>
-    // This example displays a marker at the center of Australia.
-    // When the user clicks the marker, an info window opens.
-    //21.046638, 105.784911
-    function initMap() {
-        const uluru = { lat: 21.046638, lng: 105.784911 };
-        const map = new google.maps.Map(document.getElementById("mapCanvas"), {
-            zoom: 20,
-            center: uluru,
-        });
-        const contentString = '235 Hoàng Quốc Việt, Cổ Nhuế 1, Bắc Từ Liêm, Hà Nội';
-        const infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });
-        const marker = new google.maps.Marker({
-            position: uluru,
-            map,
-            title: 'ShopPet - 235 Hoàng Quốc Việt',
-        });
-
-        marker.addListener("click", () => {
-            infowindow.open({
-                anchor: marker,
-                map,
-            });
-        });
-    }
-</script> *@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     var map = L.map('map').setView([21.046638, 105.784911], 18);

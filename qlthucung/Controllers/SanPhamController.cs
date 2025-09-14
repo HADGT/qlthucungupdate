@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using qlthucung.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace qlthucung.Controllers
 {
@@ -30,8 +32,6 @@ namespace qlthucung.Controllers
 
             // Sản phẩm chung (12 sản phẩm mới nhất)
             model.AllProducts = await _context.SanPhams
-                .OrderByDescending(sp => sp.Masp)
-                .Take(12)
                 .ToListAsync();
 
             // Root categories L1
@@ -103,6 +103,22 @@ namespace qlthucung.Controllers
             // Lấy sản phẩm theo IdDanhmuc
             return await _context.SanPhams
                 .Where(sp => sp.IdDanhmuc == Id)
+                .ToListAsync();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductsByLevel2(int l2Id, int l1Id)
+        {
+            var products = await _context.SanPhams
+                .Where(sp => sp.IdDanhmuc == l2Id)
+                .ToListAsync();
+
+            return Json(products);
+        }
+
+        public async Task<List<SanPham>> ViewAllSanPham()
+        {
+            return await _context.SanPhams
                 .ToListAsync();
         }
 
@@ -190,16 +206,36 @@ namespace qlthucung.Controllers
             return View();
         }
 
-        public async Task<IActionResult> TatCaSanPham(int? pageNumber)
+        public async Task<IActionResult> TatCaSanPham(int? pageNumber, string maLoai)
         {
-            const int pageSize = 5;
+            const int pageSize = 20;
 
+            // Lấy danh sách sản phẩm
             var products = _context.SanPhams.AsNoTracking();
+
+            // Nếu có mã loại và maLoai là số, lọc theo loại
+            if (!string.IsNullOrEmpty(maLoai) && maLoai != "all")
+            {
+                if (int.TryParse(maLoai, out int loaiId))
+                {
+                    products = products.Where(p => p.IdDanhmuc == loaiId);
+                }
+                else
+                {
+                    // Nếu maLoai không hợp lệ, có thể trả về tất cả hoặc 404
+                    // products = products; // giữ nguyên tất cả
+                    // Hoặc: return NotFound();
+                }
+            }
+
+            // Phân trang
             var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(products, pageNumber ?? 1, pageSize);
+
+            // Giữ lại mã loại để view render filter/active state
+            ViewBag.MaLoai = maLoai;
 
             return View(paginatedProducts);
         }
-
 
     }
 }

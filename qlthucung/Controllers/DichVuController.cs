@@ -147,36 +147,5 @@ namespace qlthucung.Controllers
 
             return View("Error"); // Tạo view lỗi nếu xác thực thất bại
         }
-
-
-        [HttpGet]
-        public IActionResult UserInfo()
-        {
-            string username = HttpContext.Session.GetString("username");
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("SignIn", "Security");
-            }
-            var user = _context.AspNetUsers
-                        .Where(u => u.UserName == username)
-                        .Select(u => new UserInfoViewModel
-                        {
-                            FullName = u.FullName,
-                            UserName = u.UserName,
-                            BirthDate = u.BirthDate,
-                            Email = u.Email,
-                            EmailConfirmed = u.EmailConfirmed,
-                            PhoneNumber = u.PhoneNumber,
-                            PhoneNumberConfirmed = u.PhoneNumberConfirmed
-                        })
-                        .FirstOrDefault();
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
     }
 }

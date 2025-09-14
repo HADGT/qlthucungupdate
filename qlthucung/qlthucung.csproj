@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Profile\**" />
+    <Content Remove="Views\Profile\**" />
+    <EmbeddedResource Remove="Views\Profile\**" />
+    <None Remove="Views\Profile\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="jQuery" Version="3.7.1" />
     <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.4.3" />
@@ -27,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Profile\" />
+    <Folder Include="Views\UserInfo\" />
   </ItemGroup>
 
 </Project>

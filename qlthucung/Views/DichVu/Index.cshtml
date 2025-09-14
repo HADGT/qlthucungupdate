@@ -2,8 +2,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/Content/css/style.min.css" />
+
 <div class="post-slider">
     <div class="post-wrapper">
         <div class="post text-center ml-1">
@@ -47,7 +46,7 @@
             <h4 class="text-danger">@Html.Raw(TempData["mgss"])</h4>
 
             <div class="modal-header">
-                <button class="btn btn-danger" style="background: coral; border-color: coral;">
+                <button class="btn btn-sm btn-primary mt-2">
                     <h2 class="modal-heading">Đặt lịch hẹn</h2>
                 </button>
             </div>
@@ -60,7 +59,7 @@
         </div>
     </div>
 </div>
-<div class="body">
+<div class="body container pe-5 px-5" style="padding-top: 8rem;">
     <div class="container-fluid" style="padding: 0!important;">
         <div style="background-image: url('../../Content/images/bg_7.jpg'); background-size: revert-layer; border: 2px solid rgb(183 214 247); box-shadow: 0 0 25px rgb(183 214 247), inset 0 0 10px rgb(183 214 247);" class="service-banner pt-1">
             <div class="boxservice" style=" display: block; text-align: center; padding-block: 30px; margin-block: inherit;">
@@ -69,7 +68,7 @@
                 </h3>
                 <p>Với mong muốn được trở thành ngôi nhà thứ hai của thú cưng, Petstore mang đến những dịch vụ lẫn sản phẩm cần thiết nhất mà mọi người bạn dễ thương này.</p>
 
-                <a class="btn btn-danger" style="background: coral; border-color: coral;" asp-action="Datlich" asp-controller="DichVu">
+                <a class="btn btn-sm btn-primary" asp-action="Datlich" asp-controller="DichVu">
                     Đặt lịch ngay!
                 </a>
 
@@ -125,7 +124,7 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
-            <img class="banner-service" src="~/Content/images/svbg.jpg" alt="">
+            <img class="banner-service w-100" src="~/Content/images/svbg.jpg" alt="">
 
         </div>
     </div>

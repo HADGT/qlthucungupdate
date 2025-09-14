@@ -35,13 +35,6 @@ namespace qlthucung
 
                 _context.Messages.Add(msg);
                 await _context.SaveChangesAsync();
-
-                // Gửi tin nhắn đến người nhận (admin hoặc client)
-                await Clients.User(receiverId).SendAsync("ReceiveMessage", senderId, message);
-
-                // Gửi lại cho người gửi để hiển thị ngay
-                await Clients.User(senderId).SendAsync("ReceiveMessage", senderId, message);
-
                 // Nếu là người gửi mới → thông báo cho admin
                 if (!connectedUsers.Contains(senderId))
                 {
@@ -49,15 +42,15 @@ namespace qlthucung
                     await Clients.User("admin").SendAsync("NewUserConnected", senderId);
                 }
 
-                Console.WriteLine($"[Hub] SendMessage: {senderId} -> {receiverId}: {message}");
+                // Gửi cho người nhận
                 await Clients.User(receiverId).SendAsync("ReceiveMessage", senderId, message);
 
-                Console.WriteLine($"[SendMessage] Gửi thành công tới {receiverId}");
+                // (Tuỳ chọn) Gửi echo lại cho người gửi
+                await Clients.User(senderId).SendAsync("ReceiveMessage", senderId, message);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[SendMessage ERROR] {ex.Message}");
-                Console.WriteLine($"[SendMessage STACKTRACE] {ex.StackTrace}");
                 throw; // Để SignalR gửi lỗi cho client
             }
         }
@@ -68,10 +61,26 @@ namespace qlthucung
             if (!string.IsNullOrEmpty(userId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+                // Nếu là admin → add vào group Admins
+                if (userId == "admin") // hoặc check role từ DB
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
+                }
             }
 
             await base.OnConnectedAsync();
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var userId = Context.UserIdentifier;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                connectedUsers.Remove(userId);
+            }
+            await base.OnDisconnectedAsync(exception);
+        }
+
 
         public async Task LoadMessages(string userId, string otherUserId)
         {

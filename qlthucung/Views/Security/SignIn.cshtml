@@ -16,8 +16,8 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
-                <div class="login-wrap py-3">
-                    <form asp-controller="Security" asp-action="SignIn" method="post" class="form" id="form-2">
+                <div class="login-wrap">
+                    <form asp-controller="Security" asp-action="SignIn" method="post" class="form" id="form-2" style="padding-bottom: 1px;">
                         @if (@TempData["LoginErr"] != null)
                         {
                             <div class="alert alert-danger">@TempData["LoginErr"]</div>
@@ -54,13 +54,6 @@
                             <span class="form-message">
                                 <span asp-validation-for="Password" class="text-danger fa-2xs"></span>
                             </span>
-                        </div>
-
-                        <div class="form-group text-center">
-                            <label asp-for="RememberMe" for="checkbox1" class="remember pt-2 text-dark text-center">
-                                <input type="checkbox" asp-for="RememberMe" id="checkbox1" class="checkbox1">
-                                Ghi nhớ mật khẩu
-                            </label>
                         </div>
                         <div class="form-group dont-have-account text-center">
                             <a class="account-register text-center" asp-controller="RoleAdmin" asp-action="ForgotPassword">Quên mật khẩu</a>
