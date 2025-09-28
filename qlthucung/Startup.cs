@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using qlthucung;
 using Microsoft.AspNetCore.SignalR;
 using qlthucung.Services.chat;
+using qlthucung.Helpers;
 
 namespace qlthucung
 {
@@ -77,6 +78,7 @@ namespace qlthucung
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IViewRenderService, ViewRenderService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

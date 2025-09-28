@@ -6,94 +6,102 @@
 }
 
 <div class="body fix-width scroll-inner" style="margin-top: 15px;">
-    <table class="table table-striped">
-        <tr>
-            <th>
-
-                @Html.DisplayNameFor(model => model.Makh)
-
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Thanhtoan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Giaohang)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ngaydat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ngaygiao)
-            </th>
-            <th></th>
-            @if (Model.Any(item => item.Giaohang == "chưa thanh toán"))
-            {
-                <th>Thanh toán</th>
-            }
-            @if (Model.Any(item => item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành"))
-            {
-                <th>Hủy đơn</th>
-            }
-        </tr>
-
-        @foreach (var item in Model)
-        {
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            🚫 Không có đơn hàng nào để hiển thị.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Makh)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Thanhtoan)
-                </td>
-                <td>
-                    @if (item.Giaohang == "chờ xử lý")
-                    {
-                        <div style="color: #007bff;">@item.Giaohang</div>
-                    }
-                    else if (item.Giaohang == "đang xử lý")
-                    {
-                        <div style="color: orange;">@item.Giaohang</div>
-                    }
-                    else if (item.Giaohang == "đang giao")
-                    {
-                        <div style="color: forestgreen;">@item.Giaohang</div>
-                    }
-                    else if (item.Giaohang == "giao thành công")
-                    {
-                        <div style="color: green;">@item.Giaohang</div>
-                    }
-                    else if (item.Giaohang == "Đã hủy")
-                    {
-                        <div style="color: red;">@item.Giaohang</div>
-                    }
-                    else if (item.Giaohang == "đã hoàn thành")
-                    {
-                        <div style="color: gray;">@item.Giaohang</div>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ngaydat)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ngaygiao)
-                </td>
+                <th>
 
-                <td>
-                    <a asp-action="ChiTietDonHang" asp-route-id="@item.Madon">Chi tiết đơn hàng</a>
-                </td>
-                @if (item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành" && item.Giaohang != "Đã hủy")
+                    @Html.DisplayNameFor(model => model.Makh)
+
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Thanhtoan)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Giaohang)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ngaydat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ngaygiao)
+                </th>
+                <th></th>
+                @if (Model.Any(item => item.Giaohang == "chưa thanh toán"))
                 {
-                    <td>
-                        @Html.ActionLink("Hủy đơn", "HuyDon", new { id = item.Madon })
-                    </td>
+                    <th>Thanh toán</th>
                 }
-                else
+                @if (Model.Any(item => item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành"))
                 {
-                    <td></td>
+                    <th>Hủy đơn</th>
                 }
             </tr>
-        }
 
-    </table>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Makh)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Thanhtoan)
+                    </td>
+                    <td>
+                        @if (item.Giaohang == "chờ xử lý")
+                        {
+                            <div style="color: #007bff;">@item.Giaohang</div>
+                        }
+                        else if (item.Giaohang == "đang xử lý")
+                        {
+                            <div style="color: orange;">@item.Giaohang</div>
+                        }
+                        else if (item.Giaohang == "đang giao")
+                        {
+                            <div style="color: forestgreen;">@item.Giaohang</div>
+                        }
+                        else if (item.Giaohang == "giao thành công")
+                        {
+                            <div style="color: green;">@item.Giaohang</div>
+                        }
+                        else if (item.Giaohang == "Đã hủy")
+                        {
+                            <div style="color: red;">@item.Giaohang</div>
+                        }
+                        else if (item.Giaohang == "đã hoàn thành")
+                        {
+                            <div style="color: gray;">@item.Giaohang</div>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ngaydat)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ngaygiao)
+                    </td>
 
+                    <td>
+                        <a asp-action="ChiTietDonHang" asp-route-id="@item.Madon">Chi tiết đơn hàng</a>
+                    </td>
+                    @if (item.Giaohang != "giao thành công" && item.Giaohang != "đã hoàn thành" && item.Giaohang != "Đã hủy")
+                    {
+                        <td>
+                            @Html.ActionLink("Hủy đơn", "HuyDon", new { id = item.Madon })
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+            }
+
+        </table>
+    }
 </div>

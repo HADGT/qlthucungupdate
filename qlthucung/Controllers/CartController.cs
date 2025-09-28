@@ -61,6 +61,33 @@ namespace qlthucung.Controllers
             return View();
         }
 
+        // POST: Cập nhật số lượng từng sản phẩm
+        [HttpPost]
+        public JsonResult UpdateQuantity(int id, int quantity)
+        {
+            var cart = SessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
+            if (cart == null)
+            {
+                return Json(new { success = false, message = "Giỏ hàng trống" });
+            }
+
+            var item = cart.FirstOrDefault(i => i.Product.Masp == id);
+            if (item != null)
+            {
+                item.Quantity = quantity;
+                // Cập nhật session
+                SessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
+
+                // Tính lại tổng tiền
+                var total = cart.Sum(i => i.Product.Giakhuyenmai * i.Quantity);
+                var itemTotal = item.Product.Giakhuyenmai * item.Quantity;
+
+                return Json(new { success = true, total = total, itemTotal = itemTotal });
+            }
+
+            return Json(new { success = false, message = "Không tìm thấy sản phẩm trong giỏ hàng" });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index([Bind("Hoten,Tendangnhap,Matkhau,Email,Diachi,Dienthoai,Ngaysinh,RoleId,Status,Resetpasswordcode")] KhachHang kh, DonHang dh, IFormCollection form, CheckoutModel model, MoMoPayment momo)
@@ -75,8 +102,12 @@ namespace qlthucung.Controllers
                 .Where(u => u.UserName == model.Username)
                 .Select(u => u.Id)
                 .FirstOrDefault();
+            string Makh = _context.KhachHangs
+                .Where(u => u.Makh == customerId)
+                .Select(u => u.Makh)
+                .FirstOrDefault();
 
-            if (customerId == null)
+            if (Makh == null)
             {
                 kh.Makh = customerId;
                 kh.Hoten = model.FullName;
@@ -131,6 +162,9 @@ namespace qlthucung.Controllers
             _logger.LogInformation("Mã đơn hàng vừa tạo: " + dh.Madon);
             HttpContext.Session.SetInt32("lastOrderId", dh.Madon);
 
+            // Xóa giỏ hàng session sau khi đặt hàng thành công
+            HttpContext.Session.Remove("cart");
+
             if (model.PaymentMethod == "vnpay")
             {
                 HttpContext.Session.SetString("Ordermodel", JsonConvert.SerializeObject(model));
@@ -152,6 +186,7 @@ namespace qlthucung.Controllers
             }
             return RedirectToAction("DatHangThanhCong");
         }
+
 
         [Authorize(Roles = "User")]
         public IActionResult DatHangThanhCong()

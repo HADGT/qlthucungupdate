@@ -12,7 +12,7 @@
         color: white;
     }
 
-    .text-secondary{
+    .text-secondary {
         color: #000000 !important;
     }
 </style>
@@ -41,45 +41,90 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
 <script>
     let adminId = '@userId'; // Lấy từ Razor Session
-    let currentUser = null;
+    sessionStorage.setItem("admin", adminId);
+    let currentUser = sessionStorage.getItem("User");
+    console.log("adminId" + adminId);
+    console.log("guestId" + currentUser);
     if (!adminId || adminId === "null") {
         alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
         window.location.href = "/Security/SignIn";
     }
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/ChatHub?userId=" + adminId)
+        .withUrl("/ChatHub?userId=" + adminId).withAutomaticReconnect() // tự động kết nối lại
+        .configureLogging(signalR.LogLevel.Information)
         .build();
 
-    connection.on("ReceiveMessage", function (sender, message) {
-        if (sender !== currentUser) return;
-        console.log("Nhận tin nhắn:", sender, message); // Thêm dòng này để test
+    // Lắng nghe trạng thái reconnect
+    connection.onreconnecting(error => {
+        console.warn("Mất kết nối, đang thử kết nối lại...", error);
+    });
+
+    connection.onreconnected(connectionId => {
+        console.log("Đã kết nối lại, connectionId:", connectionId);
+    });
+
+    connection.onclose(error => {
+        console.error("Kết nối bị đóng:", error);
+    });
+
+    connection.on("LoadMessageHistory", function (messages) {
         const msgBox = document.getElementById("chatMessages");
-        msgBox.innerHTML += `<div><strong>Khách:</strong> ${message}</div>`;
+        msgBox.innerHTML = '';
+        messages.forEach(msg => {
+            console.log("message-history-user " + msg);
+            const isMine = msg.senderId === adminId;
+            const msgClass = isMine ? 'text-end text-primary' : 'text-start text-secondary';
+            const senderLabel = isMine ? '' : 'Khách: ';
+            const safeContent = escapeHtml(msg.content);
+            msgBox.innerHTML += `<div class="${msgClass} chat-message"><strong>${senderLabel}</strong>${safeContent}</div>`;
+        });
         msgBox.scrollTop = msgBox.scrollHeight;
     });
 
-    connection.on("NewUserConnected", function (sender, message) {
-        if (sender !== currentUser) return;
-        console.log("Khách hàng mới:", userId);
+    connection.on("ReceiveMessage", function (sender, message) {
+        const msgBox = document.getElementById("chatMessages");
+        if (sender === currentUser) {
+            msgBox.innerHTML += `<div class="text-start text-secondary"><strong>Khách:</strong> ${message}</div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+            console.log("message-receive-user " + message);
+        } else {
+            // đánh dấu có tin nhắn mới
+            const li = document.getElementById("user-" + sender);
+            if (li) li.classList.add("fw-bold", "bg-warning");
+            const msgClass = "text-end text-primary";
+            msgBox.innerHTML += `<div class="${msgClass}">${message}</div>`;
+            console.log("message-receive-user-none " + message);
+        }
+    });
+
+    connection.on("NewUserConnected", function (userId) {
         addUserToList(userId);
     });
 
-    connection.start().then(() => {
-        console.log("Connected to ChatHub as admin:", adminId);
-    }).catch(err => console.error(err));
+    let isConnected = false;
+
+    connection.start()
+        .then(() => {
+            console.log("Connected to SignalR");
+            isConnected = true;
+        })
+        .catch(err => {
+            console.error("Không thể kết nối:", err);
+        });
 
     async function loadMessages(userId) {
         const msgBox = document.getElementById("chatMessages");
         msgBox.innerHTML = '';
         try {
-            const response = await fetch(`/get-messages?userId=${userId}`);
+            const response = await fetch(`/get-messages?userId=${adminId}`);
             const messages = await response.json();
 
             messages.forEach(msg => {
-                const sender = msg.senderId === adminId ? "Bạn" : "Khách";
+                console.log("load-message-user " + msg);
+                const sender = msg.senderId === adminId ? "" : "Khách: ";
                 const msgClass = msg.senderId === adminId ? "text-end text-primary" : "text-start text-secondary";
-                msgBox.innerHTML += `<div class="${msgClass}"><strong>${sender}:</strong> ${msg.content}</div>`;
+                msgBox.innerHTML += `<div class="${msgClass}"><strong>${sender}</strong>${msg.content}</div>`;
             });
 
             msgBox.scrollTop = msgBox.scrollHeight;
@@ -89,54 +134,52 @@
     }
 
     function sendMessage() {
+        if (!isConnected) {
+            console.warn("Chưa kết nối SignalR, không thể gửi tin nhắn");
+            return;
+        }
+
         const msgInput = document.getElementById("messageInput");
         const msg = msgInput.value.trim();
+        console.log("send-message-user " + msg);
         if (!msg || !currentUser) return;
+        if (connection.state !== signalR.HubConnectionState.Connected) {
+            console.warn("⚠️ Chưa kết nối, không thể gửi tin:", msg);
+            return;
+        }
+        try {
+        connection.invoke("SendMessage", adminId, currentUser, msg)
+            .catch(err => console.error("Lỗi gửi tin:", err));
 
-        connection.invoke("SendMessage", adminId, currentUser, msg).catch(err => console.error(err));
-
-        const msgBox = document.getElementById("chatMessages");
-        msgBox.innerHTML += `<div class="text-end text-primary"><strong>Bạn:</strong> ${msg}</div>`;
-        msgBox.scrollTop = msgBox.scrollHeight;
+        // const msgBox = document.getElementById("chatMessages");
+        // msgBox.innerHTML += `<div class="text-end text-primary">${msg}</div>`;
+        // msgBox.scrollTop = msgBox.scrollHeight;
 
         msgInput.value = '';
-        msgInput.style.height = 'auto';
+        } catch (err) {
+            console.error("❌ Lỗi gửi tin:", err);
+        }
     }
 
+
     function addUserToList(user) {
-        let userId, userName;
+        let userId = typeof user === 'string' ? user : user.id;
+        let userName = typeof user === 'string' ? user : user.userName || user.id;
 
-        if (typeof user === 'string') {
-            userId = user;
-            userName = user; // fallback hiển thị userId
-        } else if (user && user.id) {
-            userId = user.id;            // dùng user.id thay vì user.userId
-            userName = user.userName || user.id;
-        } else {
-            console.warn("User không hợp lệ:", user);
-            return;
-        }
-
-        if (!userId) {
-            console.warn("UserId không hợp lệ:", user);
-            return;
-        }
-
-        if (document.getElementById("user-" + userId)) return;
+        if (!userId || document.getElementById("user-" + userId)) return;
 
         const li = document.createElement("li");
         li.className = "list-group-item";
         li.id = "user-" + userId;
         li.style.cursor = "pointer";
-
-        const shortId = userId.length > 8 ? userId.substring(0, 8) : userId;
-        li.innerText = `${userName} (${shortId})`;
+        li.innerText = userName;
 
         li.onclick = async () => {
             currentUser = userId;
             await loadMessages(userId);
 
-            // Tô màu active
+            // reset highlight khi click
+            li.classList.remove("fw-bold", "bg-warning");
             document.querySelectorAll("#userList li").forEach(el => el.classList.remove("active"));
             li.classList.add("active");
         };
@@ -150,6 +193,7 @@
             const userList = await res.json();
 
             userList.forEach(user => addUserToList(user));
+            console.log(userList);
         } catch (e) {
             console.warn("Không thể tải danh sách khách hàng:", e);
         }

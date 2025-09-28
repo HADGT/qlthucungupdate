@@ -4,8 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/Content/css/style.min.css" />
 <style>
     .cart__body {
         width: 90%;
@@ -14,59 +12,96 @@
     .body {
         width: 90%;
     }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #d2b89c;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+        .cart-table th, .cart-table td {
+            border-bottom: 1px solid #d2b89c;
+            padding: 12px 15px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .cart-table th {
+            background-color: #8B5E3C;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .cart-table img {
+            border-radius: 8px;
+        }
+
+    .total-row td {
+        background-color: #f5e6d5;
+        font-weight: bold;
+    }
+
+    .text-danger {
+        color: #c0392b;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
 </style>
 
-<div class="body fix-width scroll-inner pt-5" style="margin-top: 50px;">
-    <table class="table table-striped">
-
+<div class="cr_body scroll-inner" style="margin-top: 50px;" id="cart-table-container">
+    <table class="table cart-table">
         @if (ViewBag.cart == null)
         {
-            <tr>Giỏ hàng trống</tr>
+            <tr>
+                <td colspan="7" class="text-center p-3"><h3>Giỏ hàng trống</h3></td>
+            </tr>
         }
         else
         {
-            <tr>
-                <th>Id</th>
-                <th>Tên sp</th>
-                <th>Hình</th>
-                <th>Đơn giá</th>
-                <th>Số lượng</th>
-                <th>Tổng tiền</th>
-                <th></th>
-            </tr>
-
-            @foreach (var item in ViewBag.cart)
-            {
+            <thead>
                 <tr>
-                    <td>@item.Product.Masp</td>
-                    <td>@item.Product.Tensp</td>
-                    <td><img src="@item.Product.Hinh" width="60" /> </td>
-                    <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai)</td>
-                    <td>@item.Quantity</td>
-                    <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai * item.Quantity)</td>
-                    <td><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Masp">Xóa sản phẩm</a></td>
+                    <th>Id</th>
+                    <th>Tên sp</th>
+                    <th>Hình</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng tiền</th>
+                    <th></th>
                 </tr>
-            }
-            <tr>
-                <td align="right" colspan="6"><b>Tổng tiền thanh toán</b></td>
-                <td>
-                    <b>
-                        @string.Format("{0:N0}", @ViewBag.total)
-                    </b>
-                </td>
-            </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.cart)
+                {
+                    <tr>
+                        <td>@item.Product.Masp</td>
+                        <td>@item.Product.Tensp</td>
+                        <td><img src="@item.Product.Hinh" width="60" class="rounded" /></td>
+                        <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai) ₫</td>
+                        <td>@item.Quantity</td>
+                        <td>@string.Format("{0:N0}", item.Product.Giakhuyenmai * item.Quantity) ₫</td>
+                        <td><a class="text-danger" asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Masp">Xóa</a></td>
+                    </tr>
+                }
+                <tr class="total-row text-danger">
+                    <td align="right" colspan="6"><b>Tổng tiền thanh toán</b></td>
+                    <td class="total-price">
+                        <b>@string.Format("{0:N0}", @ViewBag.total) ₫</b>
+                    </td>
+                </tr>
+            </tbody>
         }
-
     </table>
-    <br>
-
 </div>
 
 <div class="cart__body">
     <form method="POST" asp-controller="Cart" asp-action="Index" id="getinfo_form">
+        @Html.AntiForgeryToken()
         <div class="row pb-5">
             <div class="col-lg-6 cart__items-box text-left">
-                <a class="btn btn-danger" style="color: #fff; background-color: coral; border-color: coral;" asp-controller="SanPham" asp-action="index">Tiếp tục mua sắm</a>
+                <a class="btn btn-sm btn-primary" asp-controller="SanPham" asp-action="index">Tiếp tục mua sắm</a>
                 @if (ViewBag.cart == null)
                 {
                     <div class="emptyCart text-center">
@@ -91,7 +126,7 @@
                                     <div class="cart__items-pride">
                                         <div class="product__pride-newPride">
                                             <span class="Price">
-                                                <bdi>
+                                                <bdi class="item-total">
                                                     @string.Format("{0:N0}", item.Product.Giakhuyenmai * item.Quantity)&nbsp;
                                                     <span class="currencySymbol">₫</span>
                                                 </bdi>
@@ -99,12 +134,14 @@
                                         </div>
 
                                         <div class="cart__items-count">
-                                            Số lượng
-                                            <input type="number" name="quantity" value="@item.Quantity" min="1" class="w-25" disabled>
+                                            Số lượng:
+                                            <div class="spacer" style="margin-inline:10px;"></div>
+                                            <!-- Trong mỗi input số lượng -->
+                                            <input type="number" name="quantity_@item.Product.Masp" value="@item.Quantity" min="1" class="quantity-input w-25">
                                         </div>
 
                                     </div>
-                                    <a class="btn btn-sm btn-danger" asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Masp">Xóa sản phẩm</a>
+                                    <a class="btn btn-sm btn-danger text-white" asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Masp">Xóa sản phẩm</a>
                                 </div>
                             }
                         </div>
@@ -119,8 +156,8 @@
             <div class="col-lg-5" style="padding-left: 20px; padding-right: 10px;">
                 <div>
                     <div class="cart__info pb-5">
-                        <div class="body__mainTitle">
-                            <h2>ĐỊA CHỈ NHẬN HÀNG</h2>
+                        <div class="pt-2 pb-2">
+                            <h2>Địa chỉ nhận hàng</h2>
                         </div>
                         <center>
                             <div class="cart__info-form">
@@ -154,8 +191,8 @@
                         </center>
                         <br>
                         <br>
-                        <div class="body__mainTitle phuongthuctt">
-                            <h2>PHƯƠNG THỨC THANH TOÁN</h2>
+                        <div class="phuongthuctt">
+                            <h2>Phương thức thanh toán</h2>
                         </div>
 
                         <div class="phuongthuctt">
@@ -167,23 +204,23 @@
                         </div>
 
                         <div class="total">
-                            <span style="font-size: 1.7rem; color: coral; font-weight: 600; margin-top: -11px;">Tổng thanh toán</span>
+                            <h2 class="m-0" style="font-weight: 600; margin-top: -5px;">Tổng thanh toán</h2>
                             <br>
 
-                            <div class="product__pride-newPride" style="font-size: 25px;">
-                                <span class="Price">
-                                    <bdi>
+                            <div class="product__pride-newPride text-danger" style="font-size: 25px;">
+                                <h3 class="Price">
+                                    <bdi class="d-flex justify-content-around total-price">
                                         @if (ViewBag.total != null)
                                         {
                                             <b>@string.Format("{0:N0}", ViewBag.total)</b>
                                         }
                                         &nbsp;
-                                        <span class="currencySymbol">₫</span>
+                                        <h3 class="currencySymbol">₫</h3>
                                     </bdi>
-                                </span>
+                                </h3>
                             </div>
                         </div>
-                        <center><button class="buy" name="order" id="order" type="submit">Đặt hàng</button></center>
+                        <center><button class="buy btn btn-sm btn-primary" name="order" id="order" type="submit">Đặt hàng</button></center>
                     </div>
                 </div>
             </div>
@@ -191,9 +228,8 @@
     </form>
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.6.3.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/vietblogdao/js/districts.min.js"></script>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/gh/vietblogdao/js/districts.min.js"></script>
 <script>
     //<![CDATA[
     if (address_2 = localStorage.getItem('address_2_saved')) {
@@ -263,5 +299,36 @@
                 }
             })
         })
-    })
-</script>  
+    });
+</script>
+    <script>
+        $(document).ready(function () {
+            $('.quantity-input').on('change', function () {
+                let input = $(this);
+                let productId = input.attr('name').split('_')[1];
+                let quantity = parseInt(input.val());
+
+                if (quantity < 1) quantity = 1;
+                input.val(quantity);
+
+                $.ajax({
+                    url: '/Cart/UpdateQuantity',
+                    type: 'POST',
+                    data: { id: productId, quantity: quantity },
+                    success: function (res) {
+                        // Cập nhật giá của sản phẩm
+                        input.closest('.cart__items-pride').find('.item-total').text(res.itemTotal.toLocaleString() + ' ₫');
+
+                        // Cập nhật tổng tiền giỏ hàng
+                        $('.total-price').text(res.total.toLocaleString() + ' ₫');
+
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Cập nhật thất bại, vui lòng thử lại.');
+                    }
+                });
+            });
+        });
+    </script>
+}

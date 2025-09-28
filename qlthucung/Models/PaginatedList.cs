@@ -48,6 +48,11 @@ namespace qlthucung.Models
             var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             return new PaginatedList<T>(items, count, pageIndex, pageSize);
         }
+
+        internal static async Task CreateAsync<TEntity>(IQueryable<TEntity> entities, int pageNumber, int pageSize) where TEntity : class
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
