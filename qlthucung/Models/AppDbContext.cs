@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -26,9 +28,10 @@ namespace qlthucung.Models
         public virtual DbSet<KhachHangRole> KhachHangRoles { get; set; }
         public virtual DbSet<SanPham> SanPhams { get; set; }
         public virtual DbSet<ThuVienAnh> ThuVienAnhs { get; set; }
-        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUser { get; set; }
         public virtual DbSet<MoMoPayment> MoMoPayments { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public virtual DbSet<SPDichVu> SPDichVu { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -40,6 +43,7 @@ namespace qlthucung.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // quan trọng!
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<ChiTietDonHang>(entity =>
@@ -105,8 +109,7 @@ namespace qlthucung.Models
 
             modelBuilder.Entity<KhachHang>(entity =>
             {
-                entity.HasKey(e => e.Makh)
-                    .HasName("PK__KhachHan__7A21BB4CE42C9226");
+                entity.Property(e => e.Makh).ValueGeneratedNever();
 
                 entity.Property(e => e.Dienthoai).IsUnicode(false);
 

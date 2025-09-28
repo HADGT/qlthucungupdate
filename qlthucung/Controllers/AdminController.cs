@@ -11,6 +11,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using qlthucung.Models;
 using RestSharp;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace qlthucung.Controllers
 {
@@ -19,6 +24,7 @@ namespace qlthucung.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly string spreadsheetId = "1EHUAnDAHI6iXnvj4YPrYPh6vZUkRdQnR1bU_aG2t08s";
 
         public AdminController(AppDbContext context, IWebHostEnvironment hostingEnvironment)
         {
@@ -64,23 +70,150 @@ namespace qlthucung.Controllers
             {
                 return RedirectToAction("SignIn", "Security");
             }
+
             const int pageSize = 5;
-            var appDbContext = _context.SanPhams.Include(s => s.IdDanhmucNavigation).Include(s => s.IdthuvienNavigation);
-            var query = _context.SanPhams.AsQueryable();
-            if (searchTerm != null)
+
+            // Query sản phẩm
+            var query = _context.SanPhams
+                .Include(s => s.IdDanhmucNavigation)
+                .Include(s => s.IdthuvienNavigation)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                var lstSP = query.Where(sp => sp.Tensp.Contains(searchTerm));
+                query = query.Where(sp => sp.Tensp.Contains(searchTerm));
                 ViewBag.SearchTerm = searchTerm;
-                var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(lstSP, pageNumber ?? 1, pageSize);
-                return View(paginatedProducts);
             }
-            else
+
+            // Phân trang
+            var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(
+                query.OrderBy(m => m.Masp),
+                pageNumber ?? 1,
+                pageSize
+            );
+
+            // Lấy toàn bộ sản phẩm để so sánh với Google Sheet
+            var sanPhams = await query.OrderBy(m => m.Masp).ToListAsync();
+            var tongSanPham = sanPhams.Count; // số bản ghi sản phẩm
+
+            // Lấy dữ liệu Google Sheet
+            var service = GetSheetsService();
+            var request = service.Spreadsheets.Values.Get(spreadsheetId, "SP!A2:G");
+            var response = request.Execute();
+
+            // Lọc sheet bỏ hàng trống
+            var sheetValues = (response.Values ?? new List<IList<object>>())
+                .Where(r => r.Count > 0 && !string.IsNullOrWhiteSpace(r[0]?.ToString()))
+                .ToList();
+
+            bool isDifferent = false; // mặc định coi như giống
+            for (int i = 0; i < tongSanPham; i++)
             {
-                var lstSP = (from s in _context.SanPhams select s).OrderBy(m => m.Masp);
-                var paginatedProducts = await PaginatedList<SanPham>.CreateAsync(lstSP, pageNumber ?? 1, pageSize);
-                return View(paginatedProducts);
+                var sp = sanPhams[i];
+                var row = sheetValues[i];
+
+                if (row.Count < 7) // thiếu cột => khác
+                {
+                    isDifferent = true;
+                    break;
+                }
+
+                // nếu có 1 cột khác => khác
+                if (sp.Masp.ToString() != row[0].ToString() ||
+                    sp.Tensp != row[1].ToString() ||
+                    sp.Giaban.ToString() != row[2].ToString() ||
+                    sp.Mota != row[4].ToString() ||
+                    sp.Giamgia.ToString() != row[5].ToString() ||
+                    sp.Giakhuyenmai.ToString() != row[6].ToString())
+                {
+                    isDifferent = true;
+                    break;
+                }
             }
+
+            // Gửi flag + link Sheet sang View
+            ViewBag.IsDifferent = isDifferent;
+            ViewBag.SheetUrl = $"https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit?usp=sharing";
+
+            return View(paginatedProducts);
         }
+
+        /// <summary>
+        /// Hàm làm sạch dữ liệu số từ Google Sheet
+        /// </summary>
+        private string CleanNumber(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "0";
+
+            // Bỏ ký tự không phải số hoặc dấu .
+            var cleaned = new string(input.Where(c => char.IsDigit(c)).ToArray());
+
+            return string.IsNullOrEmpty(cleaned) ? "0" : cleaned;
+        }
+
+        [HttpPost]
+        public IActionResult UpdateDB()
+        {
+            var service = GetSheetsService();
+            var request = service.Spreadsheets.Values.Get(spreadsheetId, "SP!A2:G");
+            var response = request.Execute();
+            var sheetValues = response.Values ?? new List<IList<object>>();
+
+            foreach (var row in sheetValues)
+            {
+                int masp = int.Parse(row[0].ToString());
+                var sp = _context.SanPhams.FirstOrDefault(x => x.Masp == masp);
+                if (sp != null)
+                {
+                    sp.Tensp = row[1].ToString();
+                    // Giá bán
+                    if (decimal.TryParse(CleanNumber(row[2]?.ToString()), out var giaban))
+                        sp.Giaban = giaban;
+                    if (int.TryParse(row[3]?.ToString(), out var sl))
+                        sp.Soluongton = sp.Soluongton + sl;
+                    sp.Mota = row.Count > 4 ? row[4].ToString() : "";
+                    // Giảm giá
+                    if (int.TryParse(CleanNumber(row[5]?.ToString()), out var giamgia))
+                        sp.Giamgia = giamgia;
+                    sp.Giakhuyenmai = sp.Giaban - (sp.Giaban * sp.Giamgia / 100);
+                    sp.Ngaycapnhat = DateTime.Now;
+                }
+            }
+            try
+            {
+                var changed = _context.SaveChanges();
+
+                // 🔹 Reset lại dữ liệu Sheet (Soluongton = 0)
+                // Ghi dữ liệu
+                var values = new List<IList<object>>();
+                values.Add(new List<object> { "Masp", "Tensp", "Giaban", "Soluongton", "Mota", "Giamgia", "Giakhuyenmai" });
+                var sanPhams = _context.SanPhams.ToList();
+                foreach (var sp in sanPhams)
+                {
+                    values.Add(new List<object> { sp.Masp, sp.Tensp, sp.Giaban, 0, sp.Mota, sp.Giamgia, sp.Giakhuyenmai });
+                }
+
+                var updateRequest = service.Spreadsheets.Values.Update(
+                    new Google.Apis.Sheets.v4.Data.ValueRange
+                    {
+                        Values = values
+                    },
+                    spreadsheetId,
+                    "SP!A2:G" // Range ghi đè lại
+                );
+                updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+                updateRequest.Execute();
+
+                TempData["Message"] = $"Cập nhật thành công {changed} bản ghi và reset Sheet!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "Lỗi cập nhật: " + ex.Message;
+            }
+
+            return RedirectToAction("ListDanhMuc", new { pageNumber = 1 });
+        }
+
         public ActionResult ListDanhMucSP(string selectedParentName, string searchTerm, int page = 1)
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
@@ -213,6 +346,17 @@ namespace qlthucung.Controllers
             return View(sanPham);
         }
 
+        private SheetsService GetSheetsService()
+        {
+            var credential = GoogleCredential.FromFile("credentials.json")
+                .CreateScoped(SheetsService.Scope.Spreadsheets);
+            return new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "QLThuCung"
+            });
+        }
+
         // GET: Admin/Create
         public IActionResult Create()
         {
@@ -222,6 +366,36 @@ namespace qlthucung.Controllers
             }
             showDropList();
             return View();
+        }
+
+        public IActionResult ExcelManage()
+        {
+            var sanPhams = _context.SanPhams.ToList();
+
+            string spreadsheetId = "1EHUAnDAHI6iXnvj4YPrYPh6vZUkRdQnR1bU_aG2t08s";
+            var credential = GoogleCredential.FromFile("credentials.json")
+                            .CreateScoped(SheetsService.Scope.Spreadsheets);
+
+            var service = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "QLThuCung"
+            });
+
+            // Ghi dữ liệu
+            var values = new List<IList<object>>();
+            values.Add(new List<object> { "Masp", "Tensp", "Giaban", "Soluongton", "Mota", "Giamgia", "Giakhuyenmai" });
+            foreach (var sp in sanPhams)
+            {
+                values.Add(new List<object> { sp.Masp, sp.Tensp, sp.Giaban, 0, sp.Mota, sp.Giamgia, sp.Giakhuyenmai });
+            }
+
+            var valueRange = new ValueRange { Values = values };
+            var updateRequest = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, "SP!A1");
+            updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            updateRequest.Execute();
+
+            return Redirect($"https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit?usp=sharing");
         }
 
         public ActionResult CreateDm(DanhMuc model)
@@ -292,14 +466,7 @@ namespace qlthucung.Controllers
 
                 }
 
-                var x = sanPham.Giaban;
-                var y = sanPham.Giamgia;
-
-                var z = (x * y) / 100;
-
-                var price = x - z;
-
-                sanPham.Giakhuyenmai = price;
+                sanPham.Giakhuyenmai = sanPham.Giaban - (sanPham.Giaban * sanPham.Giamgia / 100);
 
                 _context.Add(sanPham);
                 await _context.SaveChangesAsync();
@@ -373,15 +540,7 @@ namespace qlthucung.Controllers
                     }
                     sanPham.Hinh = form["PathHinh"];
 
-                    var x = sanPham.Giaban;
-                    var y = sanPham.Giamgia;
-
-                    var z = (x * y) / 100;
-
-                    var price = x - z;
-
-                    sanPham.Giakhuyenmai = price;
-
+                    sanPham.Giakhuyenmai = sanPham.Giaban - (sanPham.Giaban * sanPham.Giamgia / 100);
 
                     _context.Update(sanPham);
                     await _context.SaveChangesAsync();

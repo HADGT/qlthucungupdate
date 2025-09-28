@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
@@ -14,7 +15,7 @@ namespace qlthucung.Models
         [Key]
         public string Id { get; set; }
         public string FullName { get; set; }
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         [StringLength(256)]
         public string UserName { get; set; }
         [StringLength(256)]

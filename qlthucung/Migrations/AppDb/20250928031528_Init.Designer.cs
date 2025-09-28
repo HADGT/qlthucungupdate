@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using qlthucung.Models;
 
@@ -11,9 +12,11 @@ using qlthucung.Models;
 namespace qlthucung.Migrations.AppDb
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250928031528_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace qlthucung.Migrations.AppDb
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("BirthDate")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -141,7 +144,7 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IdKh")
-                        .HasColumnType("nvarchar(36)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("id_kh");
 
                     b.Property<int?>("IdSp")
@@ -219,7 +222,7 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnName("hoten");
 
                     b.Property<string>("Makh")
-                        .HasColumnType("nvarchar(36)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("makh");
 
                     b.Property<DateTime?>("Ngaydat")
@@ -264,7 +267,7 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnName("giaohang");
 
                     b.Property<string>("Makh")
-                        .HasColumnType("nvarchar(36)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("makh");
 
                     b.Property<DateTime?>("Ngaydat")
@@ -291,8 +294,8 @@ namespace qlthucung.Migrations.AppDb
             modelBuilder.Entity("qlthucung.Models.KhachHang", b =>
                 {
                     b.Property<string>("Makh")
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("makh");
 
                     b.Property<string>("Diachi")
@@ -345,7 +348,8 @@ namespace qlthucung.Migrations.AppDb
                         .HasColumnType("varchar(20)")
                         .HasColumnName("tendangnhap");
 
-                    b.HasKey("Makh");
+                    b.HasKey("Makh")
+                        .HasName("PK__KhachHan__7A21BB4CE42C9226");
 
                     b.HasIndex("RoleId");
 
@@ -430,32 +434,6 @@ namespace qlthucung.Migrations.AppDb
                     b.HasIndex("Madon");
 
                     b.ToTable("MoMoPayments");
-                });
-
-            modelBuilder.Entity("qlthucung.Models.SPDichVu", b =>
-                {
-                    b.Property<string>("DichVuID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal?>("Gia")
-                        .IsRequired()
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MoTa")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("TenDichVu")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("ThoiGianDuKien")
-                        .HasColumnType("int");
-
-                    b.HasKey("DichVuID");
-
-                    b.ToTable("SPDichVu");
                 });
 
             modelBuilder.Entity("qlthucung.Models.SanPham", b =>

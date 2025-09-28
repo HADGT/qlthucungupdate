@@ -18,7 +18,11 @@
             </tr>
             <tr>
                 <th>Ngày sinh</th>
-                <td>@Model.BirthDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @(Model.BirthDate.HasValue
+                        ? Model.BirthDate.Value.ToString("dd/MM/yyyy")
+                        : "")
+                </td>
             </tr>
             <tr>
                 <th>Email</th>

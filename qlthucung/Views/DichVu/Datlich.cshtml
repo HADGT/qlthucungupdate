@@ -63,10 +63,9 @@
 
             <div class="form-group">
                 <label for="loaidv" class="form-label pt-4 pb-0">Dịch Vụ</label>
-                <select name="Tendichvu" class="form-control">
-                    <option value="Chăm sóc toàn diện">Chăm sóc toàn diện</option>
-                    <option value="Tắm, gội,...">Tắm, gội,...</option>
-                    <option value="Spa cho pet">Spa cho pet</option>
+                <select asp-for="Tendichvu" class="form-control"
+                        asp-items="@(new SelectList(ViewBag.SPDV, "TenDichVu", "TenDichVu"))">
+                    <option value="">-- Chọn dịch vụ --</option>
                 </select>
                 @Html.ValidationMessageFor(model => model.Tendichvu, "", new { @class = "text-danger" })
             </div>

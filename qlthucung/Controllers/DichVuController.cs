@@ -35,7 +35,6 @@ namespace qlthucung.Controllers
             {
                 return RedirectToAction("SignIn", "Security");
             }
-
             ViewBag.KhachHangName = khachHangName;
             return View();
         }
@@ -43,6 +42,7 @@ namespace qlthucung.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Datlich()
         {
+            ViewBag.SPDV = _context.SPDichVu.ToList();
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace qlthucung.Controllers
                 var khachHang = _context.KhachHangs.FirstOrDefault(k => k.Tendangnhap == khachHangName);
                 if (khachHang != null)
                 {
-                    model.Makh = khachHang.Makh; // Gán Makh vào model
+                    model.Makh = khachHang.Makh.ToString(); // Gán Makh vào model
                     model.Trangthai = "Đang chờ xử lý";
                 }
             }
@@ -76,7 +76,7 @@ namespace qlthucung.Controllers
                 _context.DichVus.Add(model);
                 _context.SaveChanges();
                 // Gửi email thông báo
-                var user = _context.AspNetUsers.FirstOrDefault(p => p.UserName == khachHangName);
+                var user = _context.AspNetUser.FirstOrDefault(p => p.UserName == khachHangName);
                 if (user != null && !string.IsNullOrEmpty(user.Email))
                 {
                     string subject = "Thông báo đặt lịch dịch vụ thành công";
@@ -102,7 +102,7 @@ namespace qlthucung.Controllers
             if (string.IsNullOrEmpty(username))
                 return RedirectToAction("SignIn", "Security");
 
-            var user = _context.AspNetUsers.FirstOrDefault(p => p.UserName == username);
+            var user = _context.AspNetUser.FirstOrDefault(p => p.UserName == username);
             if (user == null || string.IsNullOrEmpty(user.Email))
                 return BadRequest("Không tìm thấy người dùng hoặc email.");
 

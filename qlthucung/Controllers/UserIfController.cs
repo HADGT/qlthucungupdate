@@ -29,7 +29,7 @@ namespace qlthucung.Controllers
             {
                 return RedirectToAction("SignIn", "Security");
             }
-            var user = _context.AspNetUsers
+            var user = _context.AspNetUser
                         .Where(u => u.UserName == username)
                         .Select(u => new UserInfoViewModel
                         {
