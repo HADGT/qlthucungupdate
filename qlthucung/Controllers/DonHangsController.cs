@@ -28,7 +28,7 @@ namespace qlthucung.Controllers
         public IActionResult Details()
         {
             var donHang = (from dh in _context.DonHangs
-                           join kh in _context.KhachHangs on dh.Makh equals kh.Makh
+                           join kh in _context.KhachHangs on dh.Makh.ToString() equals kh.Makh.ToString()
                            where kh.Tendangnhap == HttpContext.Session.GetString("username")
                            select dh).Distinct().ToList();
             return View(donHang);

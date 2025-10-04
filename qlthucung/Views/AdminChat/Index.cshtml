@@ -98,6 +98,16 @@
         }
     });
 
+    // Cho phép gửi tin khi nhấn Enter
+    document.getElementById("messageInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.altKey) {
+            e.preventDefault(); // chặn xuống dòng
+            sendMessage();
+        }
+        // Alt + Enter => xuống dòng (giữ nguyên behavior mặc định)
+    });
+
+
     connection.on("NewUserConnected", function (userId) {
         addUserToList(userId);
     });

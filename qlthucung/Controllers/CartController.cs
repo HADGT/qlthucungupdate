@@ -45,7 +45,7 @@ namespace qlthucung.Controllers
             {
                 return RedirectToAction("SignIn", "Security"); // Chuyển hướng đến trang đăng nhập
             }
-            var user = _context.AspNetUsers
+            var user = _context.AspNetUser
                    .Where(p => p.UserName == username)
                    .FirstOrDefault(); // Lấy 1 user thay vì List
 
@@ -98,7 +98,7 @@ namespace qlthucung.Controllers
                 model.Tinh = model.Tinh.Split(',')[1].Trim(); // Lấy phần tên sau dấu phẩy
             }
             _logger.LogInformation("Dữ liệu tỉnh/thành phố: " + model.Tinh);
-            string customerId = _context.AspNetUsers
+            string customerId = _context.AspNetUser
                 .Where(u => u.UserName == model.Username)
                 .Select(u => u.Id)
                 .FirstOrDefault();

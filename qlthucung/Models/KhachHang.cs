@@ -19,9 +19,9 @@ namespace qlthucung.Models
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("makh")]
-        public string Makh { get; set; }
+        [StringLength(36)]
+        public string Makh { get; set; } = Guid.NewGuid().ToString();
         [Column("hoten")]
         [StringLength(255)]
         public string Hoten { get; set; }
