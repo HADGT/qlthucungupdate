@@ -5,9 +5,29 @@
 }
 
 <h1 class="pl-2">Danh sách danh mục sản phẩm</h1>
-<p class="pl-2">
-    <a class="btn btn-primary" asp-action="Create">Thêm sản phẩm</a>
-</p>
+<div class="d-flex">
+    <div class="pl-2">
+        <a class="btn btn-primary" asp-action="Create">Thêm sản phẩm</a>
+    </div>
+    <div class="pl-2">
+        <a class="btn btn-success" asp-action="ExcelManage" target="_blank">Quản lý dựa vào Excel</a>
+    </div>
+
+    @if (ViewBag.IsDifferent)
+    {
+        <div class="pl-2">
+
+            <form method="post" asp-action="UpdateDB" style="display:inline-block">
+                <button type="submit" class="btn btn-success">Cập nhật Database</button>
+            </form>
+        </div>
+    }
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info mt-2">@TempData["Message"]</div>
+}
 
 <form method="get" asp-controller="Admin" asp-action="ListDanhMuc">
     <b class="pr-2 pl-2">Tìm kiếm theo tên</b>

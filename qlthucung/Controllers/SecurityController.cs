@@ -160,6 +160,13 @@ namespace qlthucung.Controllers
                     {
                         HttpContext.Session.SetString("username", signIn.UserName);
                         HttpContext.Session.SetString("userId", user.Id);
+                        // Nếu là Admin thì chuyển sang giao diện Admin
+                        if (isAdmin)
+                        {
+                            return RedirectToAction("Index", "Admin");
+                        }
+
+                        // Nếu là User thường thì vào Home
                         return RedirectToAction("Index", "Home");
                     }
                     else if (result.IsLockedOut && !isAdmin)

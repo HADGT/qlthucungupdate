@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace qlthucung.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly UserManager<AppIdentityUser> userManager;
