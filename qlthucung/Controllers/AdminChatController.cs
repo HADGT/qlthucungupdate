@@ -9,6 +9,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using GenerativeAI;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace qlthucung.Controllers
 {
@@ -18,6 +21,7 @@ namespace qlthucung.Controllers
         private readonly AppDbContext _context;
         private readonly IChatService _chatService;
         private readonly RoleManager<AppIdentityRole> _roleManager;
+        
 
         public AdminChatController(UserManager<AppIdentityUser> userManager, AppDbContext context, IChatService chatService, RoleManager<AppIdentityRole> roleManager)
         {
@@ -25,6 +29,7 @@ namespace qlthucung.Controllers
             _context = context;
             _chatService = chatService;
             _roleManager = roleManager;
+            
         }
 
         [Authorize(Roles = "Admin")]

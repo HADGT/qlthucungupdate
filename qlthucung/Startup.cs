@@ -78,6 +78,7 @@ namespace qlthucung
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddHttpClient<IChatService, ChatService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
         }
 
